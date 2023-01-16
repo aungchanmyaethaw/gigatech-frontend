@@ -20,12 +20,14 @@ h3,
 h5,
 h6,
 h6,
-button {
+button,
+label {
   font-family: var(--font-heading);
 }
 
 p,
 span,
-a {
+a,
+input {
   font-family: var(--font-body);
 }

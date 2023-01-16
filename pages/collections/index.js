@@ -1,15 +1,10 @@
 import React from "react";
 import { ContainerStyled, UnderLine } from "styles/global.styles";
-import styled from "styled-components";
+
 import { motion } from "framer-motion";
-import { withUrqlClient, initUrqlClient } from "next-urql";
-import {
-  ssrExchange,
-  dedupExchange,
-  cacheExchange,
-  fetchExchange,
-  useQuery,
-} from "urql";
+import { withUrqlClient } from "next-urql";
+import { ssrCache, client } from "utils/urqlClient";
+import { useQuery } from "urql";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { GET_COLLECTIONS } from "graphql/collections";
@@ -65,15 +60,6 @@ export default withUrqlClient((_ssrExchange) => ({
 }))(Collections);
 
 export async function getStaticProps() {
-  const ssrCache = ssrExchange({ isClient: false });
-  const client = initUrqlClient(
-    {
-      url: process.env.NEXT_PUBLIC_GRAPHQL_URL,
-      exchanges: [dedupExchange, cacheExchange, ssrCache, fetchExchange],
-    },
-    false
-  );
-
   await client.query(GET_COLLECTIONS).toPromise();
 
   return {

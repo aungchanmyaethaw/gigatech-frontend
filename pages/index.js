@@ -1,7 +1,10 @@
 import Hero from "components/Hero";
 import PreviewProductRow from "components/PreviewProductRow";
+import { useAppContext } from "contexts/AppContext";
 
 export default function Home() {
+  const {} = useAppContext();
+
   return (
     <>
       <Hero />

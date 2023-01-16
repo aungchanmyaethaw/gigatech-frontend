@@ -3,14 +3,9 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import { withUrqlClient, initUrqlClient } from "next-urql";
-import {
-  ssrExchange,
-  dedupExchange,
-  cacheExchange,
-  fetchExchange,
-  useQuery,
-} from "urql";
+import { client, ssrCache } from "utils/urqlClient";
+import { withUrqlClient } from "next-urql";
+import { useQuery } from "urql";
 import ProductCard from "components/ProductCard";
 import { ContainerStyled } from "styles/global.styles";
 import { UnderLine } from "styles/global.styles";
@@ -104,16 +99,7 @@ export default withUrqlClient((_ssrExchange) => ({
   url: process.env.NEXT_PUBLIC_GRAPHQL_URL,
 }))(PreviewProductRow);
 
-export async function getStaticProps(ctx) {
-  const ssrCache = ssrExchange({ isClient: false });
-  const client = initUrqlClient(
-    {
-      url: process.env.NEXT_PUBLIC_GRAPHQL_URL,
-      exchanges: [dedupExchange, cacheExchange, ssrCache, fetchExchange],
-    },
-    false
-  );
-
+export async function getStaticProps() {
   await client.query(GET_PRODUCTS).toPromise();
 
   return {

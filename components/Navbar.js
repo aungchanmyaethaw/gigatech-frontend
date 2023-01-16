@@ -10,11 +10,12 @@ import {
 } from "react-icons/bs";
 import { motion } from "framer-motion";
 import styled from "styled-components";
+import { useRouter } from "next/router";
 import { useAppContext } from "contexts/AppContext";
 import { UnderLine } from "styles/global.styles";
 const Navbar = () => {
   const { handleToggleTheme, theme } = useAppContext();
-
+  const router = useRouter();
   return (
     <NavbarStyled className="px-4 py-4 lg:py-6">
       <div className="flex items-center gap-x-8">
@@ -45,10 +46,13 @@ const Navbar = () => {
             <BsHeart className="text-xl xl:text-2xl " />
             <span className="">0</span>
           </li>
-          <li>
-            <Link href="/auth">
-              <BsPersonCircle className="text-xl xl:text-2xl " />
-            </Link>
+          <li
+            onClick={() => {
+              console.log(router.query);
+              router.push("/auth");
+            }}
+          >
+            <BsPersonCircle className="text-xl xl:text-2xl " />
           </li>
         </ul>
         <ToggleBtn

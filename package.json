@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@hookform/resolvers": "^2.9.10",
     "@next/font": "13.1.1",
     "eslint": "8.31.0",
     "eslint-config-next": "13.1.1",
@@ -16,13 +17,16 @@
     "graphql": "^16.6.0",
     "next": "13.1.1",
     "next-urql": "^4.0.2",
+    "nookies": "^2.5.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-hook-form": "^7.42.1",
     "react-icons": "^4.7.1",
     "react-is": "^18.2.0",
     "react-loading-skeleton": "^3.1.0",
     "styled-components": "^5.3.6",
-    "urql": "^3.0.3"
+    "urql": "^3.0.3",
+    "yup": "^0.32.11"
   },
   "devDependencies": {
     "@tailwindcss/forms": "^0.5.3",
