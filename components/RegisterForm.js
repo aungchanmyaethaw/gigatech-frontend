@@ -8,6 +8,7 @@ import { setCookie } from "nookies";
 import { useMutation } from "urql";
 import { REGISTER_USER } from "graphql/auth";
 import { useAppContext } from "contexts/AppContext";
+import { motion } from "framer-motion";
 const schema = yup.object().shape({
   username: yup.string().min(4).max(20).required(),
   email: yup.string().email().required(),
@@ -17,8 +18,6 @@ const schema = yup.object().shape({
     .required()
     .oneOf([yup.ref("password"), null], "password did not match!"),
 });
-
-console.log();
 
 const RegisterForm = () => {
   const router = useRouter();
@@ -36,8 +35,6 @@ const RegisterForm = () => {
   const { setUserInfo, setJwt } = useAppContext();
 
   const onSubmit = async (data) => {
-    console.log(data);
-
     try {
       setDisabledBtn(true);
       const variables = {
@@ -61,13 +58,13 @@ const RegisterForm = () => {
       setCookie(null, "jwt", userData.register.jwt, {
         maxAge: 30 * 24 * 60 * 60,
         path: "/",
-        sameSite: true,
+        sameSite: "none",
       });
       localStorage.setItem(
         "user",
         JSON.stringify({
-          username: userData.register.user.username,
-          email: userData.register.user.email,
+          username: userData?.register.user.username,
+          email: userData?.register.user.email,
         })
       );
       router.push("/");
@@ -79,9 +76,13 @@ const RegisterForm = () => {
   };
 
   return (
-    <form
+    <motion.form
       className="flex flex-col items-center"
       onSubmit={handleSubmit(onSubmit)}
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true }}
+      transition={{ delay: 0.2, type: "tween", duration: 0.5 }}
     >
       <FieldSetStyled className="mb-16">
         <input
@@ -134,7 +135,7 @@ const RegisterForm = () => {
         )}
       </FieldSetStyled>
       <Button type="submit">Register</Button>
-    </form>
+    </motion.form>
   );
 };
 

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -40,8 +41,8 @@ const LoginForm = () => {
       setUserInfo((prev) => {
         return {
           ...prev,
-          username: userData.login.user.username,
-          email: userData.login.user.email,
+          username: userData?.login.user.username,
+          email: userData?.login.user.email,
         };
       });
 
@@ -50,7 +51,7 @@ const LoginForm = () => {
       setCookie(null, "jwt", userData.login.jwt, {
         maxAge: 30 * 24 * 60 * 60,
         path: "/",
-        sameSite: true,
+        sameSite: "none",
       });
 
       localStorage.setItem(
@@ -60,8 +61,7 @@ const LoginForm = () => {
           email: userData.login.user.email,
         })
       );
-
-      router.push(router.query.from.pathname);
+      router.push("/");
       setDisabledBtn(false);
       reset();
     } catch (e) {
@@ -70,9 +70,13 @@ const LoginForm = () => {
   };
 
   return (
-    <form
+    <motion.form
       className="flex flex-col items-center"
       onSubmit={handleSubmit(onSubmit)}
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true }}
+      transition={{ delay: 0.2, type: "tween", duration: 0.5 }}
     >
       <FieldSetStyled className="mb-16">
         <input
@@ -104,7 +108,7 @@ const LoginForm = () => {
       <Button type="submit" disabled={disbledBtn}>
         {disbledBtn ? "Logging In" : "Log In"}
       </Button>
-    </form>
+    </motion.form>
   );
 };
 

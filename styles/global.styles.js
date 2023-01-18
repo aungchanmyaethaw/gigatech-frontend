@@ -33,3 +33,37 @@ body{
 }
 
 `;
+
+export const Button = styled.button`
+  padding: 0.75em 1.5em;
+  position: relative;
+  overflow: hidden;
+  color: var(--primary);
+  font-family: var(--font-heading);
+  font-weight: 600;
+  background-color: ${(props) => props.theme.backgroundColor};
+  border-radius: 4px;
+  z-index: 1;
+  transition: color 300ms ease-in;
+  border: 2px solid var(--primary);
+  &:before {
+    content: "";
+    width: 100%;
+    height: 100%;
+    display: block;
+    position: absolute;
+    inset: 0;
+    background-color: var(--primary);
+    border-radius: 0.75rem;
+    transform: scale(0);
+    transition: transform 300ms ease-in;
+    z-index: -1;
+  }
+  &:hover,
+  &:active {
+    color: var(--light);
+    &:before {
+      transform: scale(1.5);
+    }
+  }
+`;

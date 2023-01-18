@@ -1,10 +1,9 @@
 import React from "react";
 import { ContainerStyled, UnderLine } from "styles/global.styles";
-
 import { motion } from "framer-motion";
 import { withUrqlClient } from "next-urql";
-import { ssrCache, client } from "utils/urqlClient";
 import { useQuery } from "urql";
+import { client, ssrCache } from "utils/urqlClient";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { GET_COLLECTIONS } from "graphql/collections";

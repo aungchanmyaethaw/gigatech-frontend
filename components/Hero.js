@@ -16,7 +16,8 @@ const Hero = () => {
           Giving Futures To Your Tech
         </h1>
         <p className="text-center text-light">
-          GigaTech offers the world's leading brands of laptops, mobile phones,
+          GigaTech offers the world &apos;s leading brands of laptops, mobile
+          phones,
           <br className="hidden lg:block" />
           desktops and more...
         </p>

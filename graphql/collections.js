@@ -1,6 +1,6 @@
-export const GET_COLLECTIONS = `query{
+export const GET_COLLECTIONS = `query getCollections($slug:String){
   
-    collections{
+    collections(filters:{slug:{eq:$slug}}){
   
       data{
         

@@ -3,7 +3,6 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import { client, ssrCache } from "utils/urqlClient";
 import { withUrqlClient } from "next-urql";
 import { useQuery } from "urql";
 import ProductCard from "components/ProductCard";
@@ -11,7 +10,7 @@ import { ContainerStyled } from "styles/global.styles";
 import { UnderLine } from "styles/global.styles";
 import { GET_PRODUCTS } from "graphql/products";
 import styled from "styled-components";
-
+import { client, ssrCache } from "utils/urqlClient";
 const PreviewProductRow = ({ variables, heading }) => {
   const [results] = useQuery({
     query: GET_PRODUCTS,

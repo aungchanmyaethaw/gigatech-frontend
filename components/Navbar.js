@@ -14,8 +14,17 @@ import { useRouter } from "next/router";
 import { useAppContext } from "contexts/AppContext";
 import { UnderLine } from "styles/global.styles";
 const Navbar = () => {
-  const { handleToggleTheme, theme } = useAppContext();
+  const { handleToggleTheme, theme, jwt } = useAppContext();
   const router = useRouter();
+
+  const handleProfileRoute = () => {
+    if (jwt) {
+      router.push("/profile");
+    } else {
+      router.push("/auth");
+    }
+  };
+
   return (
     <NavbarStyled className="px-4 py-4 lg:py-6">
       <div className="flex items-center gap-x-8">
@@ -39,19 +48,16 @@ const Navbar = () => {
             <BsSearch className="text-xl xl:text-2xl " />
           </li>
           <li>
-            <BsCart className="text-xl xl:text-2xl " />
+            <Link href="/cart">
+              <BsCart className="text-xl xl:text-2xl " />
+            </Link>
             <span className="">0</span>
           </li>
           <li>
             <BsHeart className="text-xl xl:text-2xl " />
             <span className="">0</span>
           </li>
-          <li
-            onClick={() => {
-              console.log(router.query);
-              router.push("/auth");
-            }}
-          >
+          <li onClick={handleProfileRoute}>
             <BsPersonCircle className="text-xl xl:text-2xl " />
           </li>
         </ul>
@@ -79,6 +85,7 @@ const NavbarStyled = styled.nav`
   margin: 0 auto;
   color: ${(props) => props.theme.textColor};
   li {
+    cursor: pointer;
     display: flex;
     align-items: center;
     column-gap: 8px;

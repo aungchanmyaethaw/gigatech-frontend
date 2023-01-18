@@ -24,13 +24,10 @@ export function AppContextProvider({ children }) {
     if (cookies.jwt) {
       setJwt(cookies.jwt);
       const user = JSON.parse(localStorage.getItem("user"));
-      console.log(user);
-      console.log("hello");
       setUserInfo((prev) => {
         return { ...prev, ...user };
       });
     }
-    console.log(jwt, userInfo);
   }, []);
 
   useEffect(() => {

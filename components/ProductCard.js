@@ -1,9 +1,9 @@
 import React from "react";
-import { BsHeart, BsEye } from "react-icons/bs";
+import Link from "next/link";
 import styled from "styled-components";
 import { motion } from "framer-motion";
+import { BsHeart, BsEye } from "react-icons/bs";
 import { currencyFormatter } from "utils";
-
 const OverLayVariants = {
   initial: {
     opacity: 0,
@@ -30,13 +30,12 @@ const ImageVariants = {
   },
 };
 
-const ProductCard = ({ name, brand, price, images }) => {
+const ProductCard = ({ name, brand, price, images, slug, collection }) => {
   return (
     <article>
       <ImageContainer initial="initial" whileHover="hover">
         <motion.img
           src={images.data[0].attributes.formats.small.url}
-          className="rounded"
           variants={ImageVariants}
         />
         <motion.div variants={OverLayVariants}>
@@ -44,9 +43,11 @@ const ProductCard = ({ name, brand, price, images }) => {
             <button>
               <BsHeart color="#212121" />
             </button>
-            <button>
+            <Link
+              href={`/collections/${collection.data.attributes.slug}/${slug}`}
+            >
               <BsEye color="#212121" />
-            </button>
+            </Link>
           </ButtonGroup>
         </motion.div>
       </ImageContainer>
@@ -67,6 +68,7 @@ const ImageContainer = styled(motion.div)`
   position: relative;
   cursor: pointer;
   overflow: hidden;
+  border-radius: 4px;
   & > div {
     width: 100%;
     height: 100%;
@@ -86,7 +88,8 @@ const ButtonGroup = styled.div`
   gap: 1em;
   align-items: center;
 
-  button {
+  button,
+  a {
     width: 2rem;
     height: 2rem;
     display: flex;
