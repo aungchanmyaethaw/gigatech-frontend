@@ -10,7 +10,7 @@ export function useAppContext() {
 export function AppContextProvider({ children }) {
   const [theme, setTheme] = useState("");
   const [jwt, setJwt] = useState("");
-  const [userInfo, setUserInfo] = useState({ username: "", email: "" });
+  const [userInfo, setUserInfo] = useState({ id: "", username: "", email: "" });
 
   const handleToggleTheme = () => {
     const newTheme = theme === "light" ? "dark" : "light";

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { withUrqlClient } from "next-urql";
 import { useQuery } from "urql";
 import { client, ssrCache } from "utils/urqlClient";
@@ -7,14 +7,36 @@ import { useRouter } from "next/router";
 import { AiFillPlusCircle, AiFillMinusCircle } from "react-icons/ai";
 import { BsHeart, BsCart } from "react-icons/bs";
 import styled from "styled-components";
+import { motion } from "framer-motion";
+import toast, { Toaster } from "react-hot-toast";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { currencyFormatter } from "utils";
 import { ContainerStyled, UnderLine, Button } from "styles/global.styles";
 import ImageMagnifier from "components/ImageMagnifier";
-import { motion } from "framer-motion";
+import { parseCookies } from "nookies";
+import { useAppContext } from "contexts/AppContext";
 const ProductDetails = () => {
   const router = useRouter();
+  const [qty, setQty] = useState(1);
+
+  const increaseQty = () => {
+    setQty((prev) => prev + 1);
+  };
+
+  const decreaseQty = () => {
+    setQty((prev) => {
+      return prev <= 1 ? 1 : prev - 1;
+    });
+  };
+
+  const handleSubmit = () => {
+    const cookies = parseCookies();
+    if (!cookies.jwt) {
+      toast.error("Please log in to add items into cart.");
+    } else {
+    }
+  };
 
   const [result] = useQuery({
     query: GET_SINGLE_PRODUCT,
@@ -53,6 +75,14 @@ const ProductDetails = () => {
           viewport={{ once: true }}
           transition={{ delay: 0.2, type: "tween", duration: 0.5 }}
         >
+          <Toaster
+            position="top-center"
+            toastOptions={{
+              error: {
+                duration: 3000,
+              },
+            }}
+          />
           <ImageContainer>
             <ImageMagnifier
               width={360}
@@ -74,13 +104,16 @@ const ProductDetails = () => {
                   {currencyFormatter.format(price)}
                 </span>
                 <div className="flex items-center gap-3">
-                  <AiFillMinusCircle />
-                  <p className="text-2xl font-medium">{1}</p>
-                  <AiFillPlusCircle />
+                  <AiFillMinusCircle onClick={decreaseQty} />
+                  <p className="text-2xl font-medium">{qty}</p>
+                  <AiFillPlusCircle onClick={increaseQty} />
                 </div>
               </Quantity>
               <AddToCartAndWishList>
-                <Button className="flex items-center justify-center gap-4 basis-1/2">
+                <Button
+                  className="flex items-center justify-center gap-4 basis-1/2"
+                  onClick={handleSubmit}
+                >
                   <span>Add to Cart</span>
                   <BsCart className="text-xl" />
                 </Button>

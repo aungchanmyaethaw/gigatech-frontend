@@ -2,6 +2,7 @@ export const LOG_IN_USER = `mutation LogInUser($identifier:String!,$password:Str
     login(input: {identifier: $identifier, password: $password}) {
       jwt
       user {
+        id
         username
         email
       }
@@ -12,6 +13,7 @@ export const REGISTER_USER = `mutation LogInUser($username:String!,$email:String
   register(input: {username:$username,email: $email, password: $password}) {
     jwt
     user {
+      id
       username
       email
     }

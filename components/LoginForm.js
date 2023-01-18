@@ -41,6 +41,7 @@ const LoginForm = () => {
       setUserInfo((prev) => {
         return {
           ...prev,
+          id: userData?.login.user.id,
           username: userData?.login.user.username,
           email: userData?.login.user.email,
         };
@@ -57,6 +58,7 @@ const LoginForm = () => {
       localStorage.setItem(
         "user",
         JSON.stringify({
+          id: userData?.login.user.id,
           username: userData.login.user.username,
           email: userData.login.user.email,
         })

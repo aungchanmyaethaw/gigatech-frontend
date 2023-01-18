@@ -50,6 +50,7 @@ const RegisterForm = () => {
       setUserInfo((prev) => {
         return {
           ...prev,
+          id: userData?.login.user.id,
           username: userData.register.user.username,
           email: userData.register.user.email,
         };
@@ -63,6 +64,7 @@ const RegisterForm = () => {
       localStorage.setItem(
         "user",
         JSON.stringify({
+          id: userData?.login.user.id,
           username: userData?.register.user.username,
           email: userData?.register.user.email,
         })
