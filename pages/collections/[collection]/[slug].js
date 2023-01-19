@@ -105,6 +105,9 @@ const ProductDetails = () => {
                   productSlug:
                     data.createCart.data.attributes.product.data.attributes
                       .slug,
+                  productPrice:
+                    data.createCart.data.attributes.product.data.attributes
+                      .slug,
                   userId:
                     data.createCart.data.attributes.users_permissions_user.data
                       .id,

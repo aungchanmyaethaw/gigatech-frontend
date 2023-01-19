@@ -11,6 +11,7 @@ export const GET_CART = `query getCarts($user_id:ID){
             id
             attributes{
               slug
+              price
             }
           }
         }
@@ -39,6 +40,7 @@ export const Add_Cart = `mutation addCart($qty:Int!,$product:ID!,$user_id:ID!){
             id
             attributes{
               slug
+              price
             }
           }
         }

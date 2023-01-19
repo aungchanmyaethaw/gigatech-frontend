@@ -30,6 +30,7 @@ export function AppContextProvider({ children }) {
             qty: cart?.attributes?.QTY,
             productId: cart?.attributes?.product?.data?.id,
             productSlug: cart?.attributes?.product?.data?.attributes.slug,
+            productPrice: cart?.attributes?.product?.data?.attributes.price,
             userId: cart?.attributes?.users_permissions_user?.data?.id,
           };
         })

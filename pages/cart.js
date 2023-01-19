@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import nookies from "nookies";
 import { withUrqlClient } from "next-urql";
 import { useAppContext } from "contexts/AppContext";
@@ -6,8 +6,23 @@ import styled from "styled-components";
 import { ContainerStyled, UnderLine } from "styles/global.styles";
 import CartCard from "components/CartCard";
 import { Button } from "styles/global.styles";
+import { BsCartXFill } from "react-icons/bs";
+import { currencyFormatter } from "utils";
 const Cart = () => {
   const { carts } = useAppContext();
+  const [totalAmount, setTotalAmount] = useState(0);
+
+  const handleTotalAmount = () => {
+    const tempTotal = carts.reduce(
+      (prev, current) => prev + current.qty * current.productPrice,
+      0
+    );
+    setTotalAmount(tempTotal);
+  };
+
+  useEffect(() => {
+    handleTotalAmount();
+  }, [carts]);
 
   return (
     <ContainerStyled>
@@ -24,12 +39,17 @@ const Cart = () => {
               <CartCard key={cart.id} {...cart} />
             ))}
             <div className="flex flex-col items-center justify-center gap-8">
-              <span className="mr-auto text-xl">Total Price : 0</span>
+              <span className="mr-auto text-xl">
+                Total Amount : {currencyFormatter.format(totalAmount)}
+              </span>
               <Button>Checkout</Button>
             </div>
           </>
         ) : (
-          <div></div>
+          <div className="flex flex-col items-center gap-8">
+            <BsCartXFill className="text-[6rem] text-primary" />
+            <h4 className="text-3xl font-extralight">Your Cart is Empty.</h4>
+          </div>
         )}
       </CartContainerStyled>
     </ContainerStyled>

@@ -21,6 +21,7 @@ const CartCard = ({ id, qty, productId, productSlug, userId }) => {
 
   const [cartResults, updateQty] = useMutation(UPDATE_QTY);
   const [deleteResult, deleteCart] = useMutation(DELETE_CART);
+
   const addQty = async () => {
     const variables = { qty: qty + 1, cart_id: id, product: productId };
     try {
