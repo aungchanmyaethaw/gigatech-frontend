@@ -1,19 +1,29 @@
 import React from "react";
 import { GET_CART } from "graphql/cart";
 import nookies from "nookies";
-import { withUrqlClient, initUrqlClient } from "next-urql";
-import { dedupExchange, cacheExchange, fetchExchange, useQuery } from "urql";
-import { ssrCache } from "utils/urqlClient";
-
+import { withUrqlClient } from "next-urql";
+import { useAppContext } from "contexts/AppContext";
+import styled from "styled-components";
+import { ContainerStyled, UnderLine } from "styles/global.styles";
+import CartCard from "components/CartCard";
 const Cart = () => {
-  const [result] = useQuery({ query: GET_CART });
+  const { carts } = useAppContext();
 
-  const { data, fetching, error } = result;
-
-  console.log(error);
-  console.log(data);
-
-  return <div>Cart</div>;
+  return (
+    <ContainerStyled>
+      <div className="flex flex-col items-center mb-20">
+        <h2 className="text-3xl lg:text-[40px] text-center font-normal capitalize">
+          Cart
+        </h2>
+        <UnderLine className="!w-[4rem]" />
+      </div>
+      <CartContainerStyled>
+        {carts.map((cart) => (
+          <CartCard key={cart.id} {...cart} />
+        ))}
+      </CartContainerStyled>
+    </ContainerStyled>
+  );
 };
 
 export default withUrqlClient((_ssrExchange) => ({
@@ -30,20 +40,14 @@ export async function getServerSideProps(ctx) {
       },
     };
   }
-  const client = initUrqlClient(
-    {
-      url: process.env.NEXT_PUBLIC_GRAPHQL_URL,
-      exchanges: [dedupExchange, cacheExchange, ssrCache, fetchExchange],
-      fetchOptions: { headers: { Authorization: `Bearer ${cookies.jwt}` } },
-    },
-    false
-  );
-
-  await client.query(GET_CART).toPromise();
 
   return {
-    props: {
-      urqlState: ssrCache.extractData(),
-    },
+    props: {},
   };
 }
+
+const CartContainerStyled = styled.section`
+  display: flex;
+  flex-direction: column;
+  gap: 2em;
+`;

@@ -22,9 +22,9 @@ const PreviewProductRow = ({ variables, heading }) => {
   return (
     <ContainerStyled>
       <div className="flex flex-col items-center mb-20">
-        <div className="text-3xl lg:text-[40px] text-center font-normal capitalize">
+        <h2 className="text-3xl lg:text-[40px] text-center font-normal capitalize">
           {heading}
-        </div>
+        </h2>
         <UnderLine />
       </div>
 

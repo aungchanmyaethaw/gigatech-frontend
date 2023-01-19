@@ -50,21 +50,21 @@ const RegisterForm = () => {
       setUserInfo((prev) => {
         return {
           ...prev,
-          id: userData?.login.user.id,
-          username: userData.register.user.username,
-          email: userData.register.user.email,
+          id: userData?.register.user.id,
+          username: userData?.register.user.username,
+          email: userData?.register.user.email,
         };
       });
       setJwt(userData.register.jwt);
       setCookie(null, "jwt", userData.register.jwt, {
         maxAge: 30 * 24 * 60 * 60,
         path: "/",
-        sameSite: "none",
+        sameSite: "None",
       });
       localStorage.setItem(
         "user",
         JSON.stringify({
-          id: userData?.login.user.id,
+          id: userData?.register.user.id,
           username: userData?.register.user.username,
           email: userData?.register.user.email,
         })

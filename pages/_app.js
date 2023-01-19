@@ -5,12 +5,12 @@ import Layout from "components/Layout";
 import { AppContextProvider } from "contexts/AppContext";
 export default function App({ Component, pageProps }) {
   return (
-    <AppContextProvider>
-      <Provider value={client}>
+    <Provider value={client}>
+      <AppContextProvider>
         <Layout>
           <Component {...pageProps} />
         </Layout>
-      </Provider>
-    </AppContextProvider>
+      </AppContextProvider>
+    </Provider>
   );
 }

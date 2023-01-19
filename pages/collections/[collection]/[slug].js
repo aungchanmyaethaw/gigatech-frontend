@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { withUrqlClient } from "next-urql";
-import { useQuery } from "urql";
+import { useMutation, useQuery } from "urql";
 import { client, ssrCache } from "utils/urqlClient";
 import { GET_SINGLE_PRODUCT } from "graphql/products";
 import { useRouter } from "next/router";
@@ -14,10 +14,22 @@ import "react-loading-skeleton/dist/skeleton.css";
 import { currencyFormatter } from "utils";
 import { ContainerStyled, UnderLine, Button } from "styles/global.styles";
 import ImageMagnifier from "components/ImageMagnifier";
-import { parseCookies } from "nookies";
 import { useAppContext } from "contexts/AppContext";
+import { Add_Cart, GET_CART, UPDATE_QTY } from "graphql/cart";
+import { parseCookies } from "nookies";
+
 const ProductDetails = () => {
+  const [onSuccess, setOnSuccess] = useState(false);
+  const { userInfo, carts, setCarts } = useAppContext();
   const router = useRouter();
+  const [result] = useQuery({
+    query: GET_SINGLE_PRODUCT,
+    variables: { slug: router.query.slug },
+  });
+
+  const [cartResult, addCart] = useMutation(Add_Cart);
+  const [cartResults, updataQty] = useMutation(UPDATE_QTY);
+  const [disabledBtn, setDisabledBtn] = useState(false);
   const [qty, setQty] = useState(1);
 
   const increaseQty = () => {
@@ -30,22 +42,98 @@ const ProductDetails = () => {
     });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async (qty, product_id, user_id) => {
     const cookies = parseCookies();
     if (!cookies.jwt) {
       toast.error("Please log in to add items into cart.");
     } else {
+      const existedProduct = carts.find(
+        (cart) => cart.productId === product_id && cart.userId === user_id
+      );
+      if (existedProduct) {
+        const variables = {
+          qty: existedProduct.qty + qty,
+          cart_id: existedProduct.id,
+        };
+        try {
+          setDisabledBtn(true);
+          const { data, fetching, error } = await updataQty(variables, {
+            fetchOptions: {
+              headers: {
+                Authorization: `Bearer ${cookies.jwt}`,
+              },
+            },
+          });
+
+          if (!fetching && !error) {
+            setOnSuccess(true);
+
+            setCarts((prev) => {
+              return prev.map((cart) =>
+                cart.id === existedProduct.id
+                  ? { ...cart, qty: existedProduct.qty + qty }
+                  : cart
+              );
+            });
+          }
+
+          setDisabledBtn(false);
+        } catch (e) {
+          console.log(e);
+          setDisabledBtn(false);
+        }
+      } else {
+        setDisabledBtn(true);
+        const variables = { qty, product: product_id, user_id };
+        try {
+          const { data, fetching, error } = await addCart(variables, {
+            fetchOptions: {
+              headers: {
+                Authorization: `Bearer ${cookies.jwt}`,
+              },
+            },
+          });
+          if (!fetching && !error) {
+            setOnSuccess(true);
+            setCarts((prev) => {
+              return [
+                ...prev,
+                {
+                  id: data.createCart.data.id,
+                  qty: data.createCart.data.attributes.QTY,
+                  productId: data.createCart.data.attributes.product.data.id,
+                  productSlug:
+                    data.createCart.data.attributes.product.data.attributes
+                      .slug,
+                  userId:
+                    data.createCart.data.attributes.users_permissions_user.data
+                      .id,
+                },
+              ];
+            });
+
+            setDisabledBtn(false);
+          }
+        } catch (e) {
+          setDisabledBtn(false);
+          console.log(e);
+        }
+      }
     }
   };
 
-  const [result] = useQuery({
-    query: GET_SINGLE_PRODUCT,
-    variables: { slug: router.query.slug },
-  });
-
   const { data, fetching, error } = result;
-  const product = data.products.data[0].attributes;
+
+  const id = data?.products.data[0].id;
+  const product = data?.products.data[0].attributes;
   const { name, brand, description, price, images } = product;
+
+  useEffect(() => {
+    if (onSuccess) {
+      toast.success(`${name} is Added to cart.`);
+      setOnSuccess(false);
+    }
+  }, [onSuccess]);
 
   return (
     <ContainerStyled>
@@ -81,6 +169,9 @@ const ProductDetails = () => {
               error: {
                 duration: 3000,
               },
+              success: {
+                duration: 3000,
+              },
             }}
           />
           <ImageContainer>
@@ -112,9 +203,9 @@ const ProductDetails = () => {
               <AddToCartAndWishList>
                 <Button
                   className="flex items-center justify-center gap-4 basis-1/2"
-                  onClick={handleSubmit}
+                  onClick={() => handleSubmit(qty, id, userInfo.id)}
                 >
-                  <span>Add to Cart</span>
+                  {disabledBtn ? <span>Adding</span> : <span>Add to Cart</span>}
                   <BsCart className="text-xl" />
                 </Button>
                 <WishListBtn className="flex items-center justify-center w-12 text-xl bg-transparent border-2 rounded cursor-pointer ">
@@ -134,6 +225,8 @@ export default withUrqlClient((_ssrExchange) => ({
 }))(ProductDetails);
 
 export async function getServerSideProps(ctx) {
+  // const cookies = nookies.get();
+
   await client.query(GET_SINGLE_PRODUCT, { slug: ctx.query.slug }).toPromise();
 
   return {

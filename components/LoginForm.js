@@ -52,7 +52,7 @@ const LoginForm = () => {
       setCookie(null, "jwt", userData.login.jwt, {
         maxAge: 30 * 24 * 60 * 60,
         path: "/",
-        sameSite: "none",
+        sameSite: "None",
       });
 
       localStorage.setItem(

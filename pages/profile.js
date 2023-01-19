@@ -6,9 +6,10 @@ import { useRouter } from "next/router";
 import { UnderLine, Button } from "styles/global.styles";
 import { motion } from "framer-motion";
 const Profile = () => {
-  const { userInfo, setUserInfo, setJwt } = useAppContext();
+  const { userInfo, setUserInfo, setJwt, setCarts } = useAppContext();
   const router = useRouter();
   const handleLogout = () => {
+    setCarts([]);
     setUserInfo({ username: "", email: "" });
     setJwt("");
     destroyCookie(null, "jwt");
