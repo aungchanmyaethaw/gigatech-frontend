@@ -7,6 +7,9 @@ const nextConfig = {
   devIndicators: {
     buildActivity: false,
   },
+  images: {
+    domains: ["res.cloudinary.com"],
+  },
 };
 
 module.exports = nextConfig;

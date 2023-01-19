@@ -1,11 +1,11 @@
 import React from "react";
-import { GET_CART } from "graphql/cart";
 import nookies from "nookies";
 import { withUrqlClient } from "next-urql";
 import { useAppContext } from "contexts/AppContext";
 import styled from "styled-components";
 import { ContainerStyled, UnderLine } from "styles/global.styles";
 import CartCard from "components/CartCard";
+import { Button } from "styles/global.styles";
 const Cart = () => {
   const { carts } = useAppContext();
 
@@ -18,9 +18,19 @@ const Cart = () => {
         <UnderLine className="!w-[4rem]" />
       </div>
       <CartContainerStyled>
-        {carts.map((cart) => (
-          <CartCard key={cart.id} {...cart} />
-        ))}
+        {carts.length > 0 ? (
+          <>
+            {carts.map((cart) => (
+              <CartCard key={cart.id} {...cart} />
+            ))}
+            <div className="flex flex-col items-center justify-center gap-8">
+              <span className="mr-auto text-xl">Total Price : 0</span>
+              <Button>Checkout</Button>
+            </div>
+          </>
+        ) : (
+          <div></div>
+        )}
       </CartContainerStyled>
     </ContainerStyled>
   );

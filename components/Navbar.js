@@ -13,19 +13,9 @@ import styled from "styled-components";
 import { useRouter } from "next/router";
 import { useAppContext } from "contexts/AppContext";
 import { UnderLine } from "styles/global.styles";
-import { useQuery } from "urql";
-import { GET_CART } from "graphql/cart";
 import { parseCookies } from "nookies";
 const Navbar = () => {
-  const cookies = parseCookies();
   const { handleToggleTheme, theme, jwt, carts } = useAppContext();
-  // const [result] = useQuery({
-  //   query: GET_CART,
-  //   variables: {
-  //     user_id: userInfo.id,
-  //   },
-  // });
-  // const { data, fetching, error } = result;
 
   const router = useRouter();
 

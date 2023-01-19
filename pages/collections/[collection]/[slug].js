@@ -15,7 +15,7 @@ import { currencyFormatter } from "utils";
 import { ContainerStyled, UnderLine, Button } from "styles/global.styles";
 import ImageMagnifier from "components/ImageMagnifier";
 import { useAppContext } from "contexts/AppContext";
-import { Add_Cart, GET_CART, UPDATE_QTY } from "graphql/cart";
+import { Add_Cart, UPDATE_QTY } from "graphql/cart";
 import { parseCookies } from "nookies";
 
 const ProductDetails = () => {
@@ -28,7 +28,7 @@ const ProductDetails = () => {
   });
 
   const [cartResult, addCart] = useMutation(Add_Cart);
-  const [cartResults, updataQty] = useMutation(UPDATE_QTY);
+  const [qtyResult, updateQty] = useMutation(UPDATE_QTY);
   const [disabledBtn, setDisabledBtn] = useState(false);
   const [qty, setQty] = useState(1);
 
@@ -57,7 +57,7 @@ const ProductDetails = () => {
         };
         try {
           setDisabledBtn(true);
-          const { data, fetching, error } = await updataQty(variables, {
+          const { data, fetching, error } = await updateQty(variables, {
             fetchOptions: {
               headers: {
                 Authorization: `Bearer ${cookies.jwt}`,
@@ -204,6 +204,7 @@ const ProductDetails = () => {
                 <Button
                   className="flex items-center justify-center gap-4 basis-1/2"
                   onClick={() => handleSubmit(qty, id, userInfo.id)}
+                  disabled={disabledBtn}
                 >
                   {disabledBtn ? <span>Adding</span> : <span>Add to Cart</span>}
                   <BsCart className="text-xl" />

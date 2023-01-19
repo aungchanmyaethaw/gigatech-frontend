@@ -75,3 +75,21 @@ export const UPDATE_QTY = `mutation updateQty($qty:Int!,$cart_id:ID!){
   }
   
 }`;
+
+export const DELETE_CART = `mutation deleteQty($cart_id:ID!){
+  deleteCart(id:$cart_id){
+			data{
+        id
+        attributes{
+          product{
+            data{
+              id
+              attributes{
+                name
+              }
+            }
+          }
+        }
+      }
+  }
+}`;
