@@ -20,7 +20,7 @@ import { parseCookies } from "nookies";
 import Heart from "components/Heart";
 const ProductDetails = () => {
   const [onSuccess, setOnSuccess] = useState(false);
-  const { userInfo, carts, setCarts } = useAppContext();
+  const { userInfo, carts, setCarts, removeFromWishList } = useAppContext();
   const router = useRouter();
   const [result] = useQuery({
     query: GET_SINGLE_PRODUCT,
@@ -95,24 +95,21 @@ const ProductDetails = () => {
           });
           if (!fetching && !error) {
             setOnSuccess(true);
+
+            const newCart = {
+              id: data.createCart.data.id,
+              qty: data.createCart.data.attributes.QTY,
+              productId: data.createCart.data.attributes.product.data.id,
+              productSlug:
+                data.createCart.data.attributes.product.data.attributes.slug,
+              productPrice:
+                data.createCart.data.attributes.product.data.attributes.slug,
+              userId:
+                data.createCart.data.attributes.users_permissions_user.data.id,
+            };
+
             setCarts((prev) => {
-              return [
-                ...prev,
-                {
-                  id: data.createCart.data.id,
-                  qty: data.createCart.data.attributes.QTY,
-                  productId: data.createCart.data.attributes.product.data.id,
-                  productSlug:
-                    data.createCart.data.attributes.product.data.attributes
-                      .slug,
-                  productPrice:
-                    data.createCart.data.attributes.product.data.attributes
-                      .slug,
-                  userId:
-                    data.createCart.data.attributes.users_permissions_user.data
-                      .id,
-                },
-              ];
+              return [...prev, newCart];
             });
 
             setDisabledBtn(false);
@@ -213,7 +210,7 @@ const ProductDetails = () => {
                   <BsCart className="text-xl" />
                 </Button>
 
-                <Heart />
+                <Heart userId={userInfo.id} productId={id} />
               </AddToCartAndWishList>
             </ButtonGroup>
           </ProductInfo>

@@ -9,7 +9,7 @@ import { useAppContext } from "contexts/AppContext";
 import { UPDATE_QTY, DELETE_CART } from "graphql/cart";
 import { parseCookies } from "nookies";
 import toast, { Toaster } from "react-hot-toast";
-const CartCard = ({ id, qty, productId, productSlug, userId }) => {
+const CartCard = ({ id, qty, productId, productSlug }) => {
   const { setCarts } = useAppContext();
   const cookies = parseCookies();
   const [{ data, fetching, error }] = useQuery({

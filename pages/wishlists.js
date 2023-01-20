@@ -5,6 +5,7 @@ import { withUrqlClient } from "next-urql";
 import { UnderLine } from "styles/global.styles";
 import styled from "styled-components";
 import { useAppContext } from "contexts/AppContext";
+import WishlistCard from "components/WishlistCard";
 const WishLists = () => {
   const { wishlistFetching, wishlists } = useAppContext();
 
@@ -17,10 +18,10 @@ const WishLists = () => {
         <UnderLine className="!w-[6rem]" />
       </div>
       <WishContainerstyled>
-        {!wishlistFetching && wishlists > 0 ? (
+        {!wishlistFetching && wishlists.length > 0 ? (
           <>
-            {carts.map((cart) => (
-              <CartCard key={cart.id} {...cart} />
+            {wishlists.map((wishlist) => (
+              <WishlistCard key={wishlist.id} {...wishlist} />
             ))}
           </>
         ) : (

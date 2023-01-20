@@ -1,7 +1,11 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { useQuery } from "urql";
+import { useMutation, useQuery } from "urql";
 import { GET_CART } from "graphql/cart";
-import { GET_WISHLISTS } from "graphql/wishlists";
+import {
+  GET_WISHLISTS,
+  DELETE_WISHLISTS,
+  ADD_WISHLIST,
+} from "graphql/wishlists";
 import { parseCookies } from "nookies";
 
 const AppContext = createContext();
@@ -31,6 +35,68 @@ export function AppContextProvider({ children }) {
       user_id: userInfo.id,
     },
   });
+
+  const [result, removeWishList] = useMutation(DELETE_WISHLISTS);
+  const [addResult, addWishlist] = useMutation(ADD_WISHLIST);
+
+  const removeFromWishList = async (id) => {
+    try {
+      const variables = {
+        wishlist_id: id,
+      };
+      const { data, fetching, error } = await removeWishList(variables, {
+        fetchOptions: {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        },
+      });
+
+      if (!fetching && !error) {
+        setWishlists((prev) => {
+          return prev.filter((wishlist) => wishlist.id !== id);
+        });
+      }
+    } catch (e) {
+      console.log(e.message);
+    }
+  };
+
+  const addToWishList = async (product_id, user_id) => {
+    try {
+      const variables = {
+        product: product_id,
+        user_id: user_id,
+      };
+      const { data, fetching, error } = await addWishlist(variables, {
+        fetchOptions: {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        },
+      });
+
+      if (!fetching && !error) {
+        console.log(data);
+        const newWishList = {
+          id: data.createWishlist.data.id,
+          productId: data.createWishlist.data.attributes.product.data.id,
+          productSlug:
+            data.createWishlist.data.attributes.product.data.attributes.slug,
+          productPrice:
+            data.createWishlist.data.attributes.product.data.attributes.price,
+          collectionSlug:
+            data.createWishlist.data.attributes.product.data.attributes
+              .collection.data.attributes.slug,
+          userId:
+            data.createWishlist.data.attributes.users_permissions_user.data.id,
+        };
+        setWishlists((prev) => [...prev, newWishList]);
+      }
+    } catch (e) {
+      console.log(e.message);
+    }
+  };
 
   useEffect(() => {
     if (!jwt) {
@@ -71,6 +137,9 @@ export function AppContextProvider({ children }) {
             productId: wishlist.attributes.product.data.id,
             productSlug: wishlist.attributes.product.data.attributes.slug,
             productPrice: wishlist.attributes.product.data.attributes.price,
+            collectionSlug:
+              wishlist.attributes.product.data.attributes.collection.data
+                .attributes.slug,
             userId: wishlist.attributes.users_permissions_user.data.id,
           };
         })
@@ -123,6 +192,8 @@ export function AppContextProvider({ children }) {
     setWishlists,
     fetching,
     wishlistFetching,
+    removeFromWishList,
+    addToWishList,
   };
 
   return (
