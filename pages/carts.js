@@ -8,8 +8,8 @@ import CartCard from "components/CartCard";
 import { Button } from "styles/global.styles";
 import { BsCartXFill } from "react-icons/bs";
 import { currencyFormatter } from "utils";
-const Cart = () => {
-  const { carts } = useAppContext();
+const Carts = () => {
+  const { carts, fetching } = useAppContext();
   const [totalAmount, setTotalAmount] = useState(0);
 
   const handleTotalAmount = () => {
@@ -24,6 +24,10 @@ const Cart = () => {
     handleTotalAmount();
   }, [carts]);
 
+  if (fetching) {
+    return <h1>Loading...</h1>;
+  }
+
   return (
     <ContainerStyled>
       <div className="flex flex-col items-center mb-20">
@@ -33,7 +37,7 @@ const Cart = () => {
         <UnderLine className="!w-[4rem]" />
       </div>
       <CartContainerStyled>
-        {carts.length > 0 ? (
+        {!fetching && carts.length > 0 ? (
           <>
             {carts.map((cart) => (
               <CartCard key={cart.id} {...cart} />
@@ -58,7 +62,7 @@ const Cart = () => {
 
 export default withUrqlClient((_ssrExchange) => ({
   url: process.env.NEXT_PUBLIC_GRAPHQL_URL,
-}))(Cart);
+}))(Carts);
 
 export async function getServerSideProps(ctx) {
   const cookies = nookies.get(ctx);

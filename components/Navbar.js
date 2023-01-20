@@ -13,9 +13,8 @@ import styled from "styled-components";
 import { useRouter } from "next/router";
 import { useAppContext } from "contexts/AppContext";
 import { UnderLine } from "styles/global.styles";
-import { parseCookies } from "nookies";
 const Navbar = () => {
-  const { handleToggleTheme, theme, jwt, carts } = useAppContext();
+  const { handleToggleTheme, theme, jwt, carts, wishlists } = useAppContext();
 
   const router = useRouter();
 
@@ -49,17 +48,18 @@ const Navbar = () => {
           <li>
             <BsSearch className="text-xl xl:text-2xl " />
           </li>
-          <li>
-            <Link href="/cart">
+          <Link href="/carts">
+            <li>
               <BsCart className="text-xl xl:text-2xl " />
-            </Link>
-
-            <span>{carts.length || 0} </span>
-          </li>
-          <li>
-            <BsHeart className="text-xl xl:text-2xl " />
-            <span className="">0</span>
-          </li>
+              <span>{carts.length || 0} </span>
+            </li>
+          </Link>
+          <Link href="/wishlists">
+            <li>
+              <BsHeart className="text-xl xl:text-2xl " />
+              <span className="">{wishlists.length || 0}</span>
+            </li>
+          </Link>
           <li onClick={handleProfileRoute}>
             <BsPersonCircle className="text-xl xl:text-2xl " />
           </li>

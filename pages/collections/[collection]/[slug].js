@@ -17,7 +17,7 @@ import ImageMagnifier from "components/ImageMagnifier";
 import { useAppContext } from "contexts/AppContext";
 import { Add_Cart, UPDATE_QTY } from "graphql/cart";
 import { parseCookies } from "nookies";
-
+import Heart from "components/Heart";
 const ProductDetails = () => {
   const [onSuccess, setOnSuccess] = useState(false);
   const { userInfo, carts, setCarts } = useAppContext();
@@ -212,9 +212,8 @@ const ProductDetails = () => {
                   {disabledBtn ? <span>Adding</span> : <span>Add to Cart</span>}
                   <BsCart className="text-xl" />
                 </Button>
-                <WishListBtn className="flex items-center justify-center w-12 text-xl bg-transparent border-2 rounded cursor-pointer ">
-                  <BsHeart />
-                </WishListBtn>
+
+                <Heart />
               </AddToCartAndWishList>
             </ButtonGroup>
           </ProductInfo>
@@ -229,8 +228,6 @@ export default withUrqlClient((_ssrExchange) => ({
 }))(ProductDetails);
 
 export async function getServerSideProps(ctx) {
-  // const cookies = nookies.get();
-
   await client.query(GET_SINGLE_PRODUCT, { slug: ctx.query.slug }).toPromise();
 
   return {
@@ -283,9 +280,4 @@ const AddToCartAndWishList = styled.div`
   width: 100%;
   display: flex;
   gap: 1em;
-`;
-
-const WishListBtn = styled.div`
-  color: ${(props) => props.theme.textColor};
-  border-color: ${(props) => props.theme.textColor};
 `;
