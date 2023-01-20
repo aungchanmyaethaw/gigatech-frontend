@@ -7,11 +7,12 @@ import styled from "styled-components";
 import { AiFillPlusCircle, AiFillMinusCircle } from "react-icons/ai";
 import { useAppContext } from "contexts/AppContext";
 import { UPDATE_QTY, DELETE_CART } from "graphql/cart";
-import { parseCookies } from "nookies";
 import toast, { Toaster } from "react-hot-toast";
+import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
+import { motion } from "framer-motion";
 const CartCard = ({ id, qty, productId, productSlug }) => {
-  const { setCarts } = useAppContext();
-  const cookies = parseCookies();
+  const { setCarts, jwt } = useAppContext();
   const [{ data, fetching, error }] = useQuery({
     query: GET_SINGLE_PRODUCT,
     variables: {
@@ -28,11 +29,11 @@ const CartCard = ({ id, qty, productId, productSlug }) => {
       const { data, fetching, error } = await updateQty(variables, {
         fetchOptions: {
           headers: {
-            Authorization: `Bearer ${cookies.jwt}`,
+            Authorization: `Bearer ${jwt}`,
           },
         },
       });
-      console.log(error);
+
       if (!fetching && !error) {
         setCarts((prev) => {
           return prev.map((cart) =>
@@ -52,7 +53,7 @@ const CartCard = ({ id, qty, productId, productSlug }) => {
         const { data, fetching, error } = await deleteCart(variables, {
           fetchOptions: {
             headers: {
-              Authorization: `Bearer ${cookies.jwt}`,
+              Authorization: `Bearer ${jwt}`,
             },
           },
         });
@@ -61,11 +62,7 @@ const CartCard = ({ id, qty, productId, productSlug }) => {
           setCarts((prev) => {
             return prev.filter((cart) => cart.id !== id);
           });
-          toast.success(
-            `${data.deleteCart.data.attributes.product.data.attributes.name} is  remove from cart.`
-          );
         }
-        console.log(error);
       } catch (e) {
         console.log(e);
       }
@@ -75,11 +72,10 @@ const CartCard = ({ id, qty, productId, productSlug }) => {
         const { data, fetching, error } = await updateQty(variables, {
           fetchOptions: {
             headers: {
-              Authorization: `Bearer ${cookies.jwt}`,
+              Authorization: `Bearer ${jwt}`,
             },
           },
         });
-        console.log(error);
         if (!fetching && !error) {
           setCarts((prev) => {
             return prev.map((cart) =>
@@ -94,13 +90,26 @@ const CartCard = ({ id, qty, productId, productSlug }) => {
   };
 
   if (fetching) {
-    return <h1>Loading</h1>;
+    return (
+      <article className="flex flex-col items-center gap-20 px-2 py-2 border rounded md:flex-row">
+        <SkeletonTheme baseColor="#ddd" highlightColor="#fff">
+          <Skeleton height={156} width={156} />
+          <Skeleton width={240} count="2" />
+        </SkeletonTheme>
+      </article>
+    );
   }
 
   const { name, price, images } = data.products.data[0].attributes;
 
   return (
-    <article className="flex flex-col items-center justify-between gap-4 px-2 py-2 border rounded md:flex-row">
+    <motion.article
+      className="flex flex-col items-center justify-between gap-4 px-2 py-2 border rounded md:flex-row"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      layout
+    >
       <Toaster
         position="top-center"
         toastOptions={{
@@ -126,15 +135,14 @@ const CartCard = ({ id, qty, productId, productSlug }) => {
         <div className="flex items-center gap-3 basis-1/2">
           <AiFillMinusCircle onClick={() => subStractQty()} />
           <p className="text-2xl font-medium">{qty}</p>
-          <button onClick={addQty}>
-            <AiFillPlusCircle />
-          </button>
+
+          <AiFillPlusCircle onClick={addQty} />
         </div>
         <span className="ml-auto text-xl text-primary basis-1/2">
           {currencyFormatter.format(price * qty)}
         </span>
       </Quantity>
-    </article>
+    </motion.article>
   );
 };
 
@@ -144,6 +152,7 @@ const Quantity = styled.div`
   display: flex;
   align-items: center;
   gap: 1.5em;
+
   svg {
     font-size: 1.75rem;
     cursor: pointer;

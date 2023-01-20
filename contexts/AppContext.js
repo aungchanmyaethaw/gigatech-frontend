@@ -7,6 +7,7 @@ import {
   ADD_WISHLIST,
 } from "graphql/wishlists";
 import { parseCookies } from "nookies";
+import { useRouter } from "next/router";
 
 const AppContext = createContext();
 
@@ -15,6 +16,8 @@ export function useAppContext() {
 }
 
 export function AppContextProvider({ children }) {
+  const router = useRouter();
+
   const [theme, setTheme] = useState("");
   const [jwt, setJwt] = useState("");
   const [userInfo, setUserInfo] = useState({ id: "", username: "", email: "" });
@@ -63,6 +66,10 @@ export function AppContextProvider({ children }) {
   };
 
   const addToWishList = async (product_id, user_id) => {
+    if (!jwt) {
+      router.push("/auth");
+    }
+
     try {
       const variables = {
         product: product_id,
@@ -77,7 +84,6 @@ export function AppContextProvider({ children }) {
       });
 
       if (!fetching && !error) {
-        console.log(data);
         const newWishList = {
           id: data.createWishlist.data.id,
           productId: data.createWishlist.data.attributes.product.data.id,
@@ -144,8 +150,6 @@ export function AppContextProvider({ children }) {
           };
         })
       );
-
-      // );
     }
   }, [wishlistFetching]);
 
@@ -154,8 +158,6 @@ export function AppContextProvider({ children }) {
     setTheme((prev) => (prev == "light" ? "dark" : "light"));
     localStorage.setItem("theme", newTheme);
   };
-
-  const handleAddToCart = () => {};
 
   useEffect(() => {
     const cookies = parseCookies();

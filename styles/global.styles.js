@@ -5,6 +5,12 @@ export const ContainerStyled = styled.section`
   margin: 0 auto;
   padding: 5rem 1rem;
   color: ${(props) => props.theme.textColor};
+  overflow-x: hidden;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 export const UnderLine = styled.div`
@@ -59,8 +65,8 @@ export const Button = styled.button`
     transition: transform 300ms ease-in;
     z-index: -1;
   }
-  &:hover,
-  &:active {
+  &:not(:disabled):hover,
+  &:not(:disabled):active {
     color: var(--light);
     &:before {
       transform: scale(1.5);

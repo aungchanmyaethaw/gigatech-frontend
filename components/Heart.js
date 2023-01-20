@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { BsHeartFill, BsHeart } from "react-icons/bs";
 import { useAppContext } from "contexts/AppContext";
-export const Heart = ({ userId, productId }) => {
+import toast, { Toaster } from "react-hot-toast";
+export const Heart = ({ userId, productId, isHomePage = false, name }) => {
   const [isWishlist, setIsWishList] = useState(false);
   const [wishedId, setWishedId] = useState("");
-  const { theme, wishlists, removeFromWishList, addToWishList } =
-    useAppContext();
+  const { wishlists, removeFromWishList, addToWishList } = useAppContext();
 
   useEffect(() => {
     const isWished = wishlists.find(
@@ -20,32 +20,44 @@ export const Heart = ({ userId, productId }) => {
     }
   }, [wishlists]);
 
+  const handleAddWishList = () => {
+    addToWishList(productId, userId);
+    toast.success(`${name} is added from wishList.`);
+  };
+
   const handleRemoveWishList = () => {
     removeFromWishList(wishedId);
     setWishedId("");
     setIsWishList(false);
+    toast.error(`${name} is removed from wishList.`);
   };
 
   return (
-    <WishListBtn className="flex items-center justify-center w-12 text-2xl bg-transparent border-transparent border-2 rounded">
+    <>
+      <Toaster
+        position="top-center"
+        toastOptions={{
+          success: {
+            duration: 3000,
+          },
+        }}
+      />
       {isWishlist ? (
         <BsHeartFill
           fill={"#e21945"}
-          className="cursor-pointer"
+          className={`text-2xl cursor-pointer ${isHomePage ? "text-base" : ""}`}
           onClick={handleRemoveWishList}
         />
       ) : (
         <BsHeart
-          className="cursor-pointer"
-          onClick={() => addToWishList(productId, userId)}
+          className={`text-2xl cursor-pointer hover:fill-error ${
+            isHomePage ? "text-dark-200  text-base" : ""
+          } `}
+          onClick={handleAddWishList}
         />
       )}
-    </WishListBtn>
+    </>
   );
 };
 
 export default Heart;
-
-const WishListBtn = styled.div`
-  border-color: ${(props) => props.theme.textColor};
-`;

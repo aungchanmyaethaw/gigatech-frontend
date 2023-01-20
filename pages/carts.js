@@ -8,6 +8,8 @@ import CartCard from "components/CartCard";
 import { Button } from "styles/global.styles";
 import { BsCartXFill } from "react-icons/bs";
 import { currencyFormatter } from "utils";
+import { motion, AnimatePresence } from "framer-motion";
+import Loader from "components/Loader";
 const Carts = () => {
   const { carts, fetching } = useAppContext();
   const [totalAmount, setTotalAmount] = useState(0);
@@ -24,8 +26,42 @@ const Carts = () => {
     handleTotalAmount();
   }, [carts]);
 
+  let body;
+
   if (fetching) {
-    return <h1>Loading...</h1>;
+    body = <Loader />;
+  } else {
+    if (carts.length > 0) {
+      body = (
+        <>
+          <AnimatePresence>
+            {carts.map((cart) => (
+              <CartCard key={cart.id} {...cart} />
+            ))}
+            <motion.div
+              className="flex flex-col items-center justify-center gap-8"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ delay: 0.5, duration: 0.5 }}
+              layout
+            >
+              <span className="mr-auto text-xl">
+                Total Amount : {currencyFormatter.format(totalAmount)}
+              </span>
+              <Button>Checkout</Button>
+            </motion.div>
+          </AnimatePresence>
+        </>
+      );
+    } else {
+      body = (
+        <div className="flex flex-col items-center gap-8">
+          <BsCartXFill className="text-[6rem] text-primary" />
+          <h4 className="text-3xl font-extralight">Your Cart is Empty.</h4>
+        </div>
+      );
+    }
   }
 
   return (
@@ -36,25 +72,13 @@ const Carts = () => {
         </h2>
         <UnderLine className="!w-[4rem]" />
       </div>
-      <CartContainerStyled>
-        {!fetching && carts.length > 0 ? (
-          <>
-            {carts.map((cart) => (
-              <CartCard key={cart.id} {...cart} />
-            ))}
-            <div className="flex flex-col items-center justify-center gap-8">
-              <span className="mr-auto text-xl">
-                Total Amount : {currencyFormatter.format(totalAmount)}
-              </span>
-              <Button>Checkout</Button>
-            </div>
-          </>
-        ) : (
-          <div className="flex flex-col items-center gap-8">
-            <BsCartXFill className="text-[6rem] text-primary" />
-            <h4 className="text-3xl font-extralight">Your Cart is Empty.</h4>
-          </div>
-        )}
+      <CartContainerStyled
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ delay: 0.3, type: "tween", duration: 0.5 }}
+      >
+        {body}
       </CartContainerStyled>
     </ContainerStyled>
   );
@@ -80,7 +104,7 @@ export async function getServerSideProps(ctx) {
   };
 }
 
-const CartContainerStyled = styled.section`
+const CartContainerStyled = styled(motion.div)`
   display: flex;
   flex-direction: column;
   gap: 2em;

@@ -76,6 +76,7 @@ const PreviewProductRow = ({ variables, heading }) => {
           {data.products.data.map((product) => (
             <ProductCard
               {...product.attributes}
+              id={product.id}
               key={product.attributes.slug}
             />
           ))}

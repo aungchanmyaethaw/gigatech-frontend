@@ -86,6 +86,7 @@ const Collection = () => {
             >
               {data.products.data.map((product) => (
                 <ProductCard
+                  id={product.id}
                   {...product.attributes}
                   key={product.attributes.slug}
                 />

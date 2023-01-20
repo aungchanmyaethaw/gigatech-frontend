@@ -7,8 +7,11 @@ import Image from "next/image";
 import { currencyFormatter } from "utils";
 import { Button } from "styles/global.styles";
 import Link from "next/link";
-const WishlistCard = ({ productSlug, collectionSlug }) => {
-  const { setCarts } = useAppContext();
+import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
+import { motion } from "framer-motion";
+const WishlistCard = ({ productSlug, collectionSlug, id }) => {
+  const { removeFromWishList } = useAppContext();
   const cookies = parseCookies();
   const [{ data, fetching, error }] = useQuery({
     query: GET_SINGLE_PRODUCT,
@@ -18,13 +21,26 @@ const WishlistCard = ({ productSlug, collectionSlug }) => {
   });
 
   if (fetching) {
-    return <h1>Fetching...</h1>;
+    return (
+      <article className="flex flex-col items-center gap-20 px-2 py-2 border rounded md:flex-row">
+        <SkeletonTheme baseColor="#ddd" highlightColor="#fff">
+          <Skeleton height={156} width={156} />
+          <Skeleton width={240} count="2" />
+        </SkeletonTheme>
+      </article>
+    );
   }
 
   const { name, price, images } = data.products.data[0].attributes;
 
   return (
-    <article className="flex flex-col items-center justify-between gap-4 px-2 py-2 border rounded md:flex-row">
+    <motion.article
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      layout
+      className="flex flex-col items-center justify-between gap-4 px-2 py-2 border rounded md:flex-row"
+    >
       <div className="flex items-center gap-4 grow">
         <Link href={`/collections/${collectionSlug}/${productSlug}`}>
           <Image
@@ -46,12 +62,15 @@ const WishlistCard = ({ productSlug, collectionSlug }) => {
           {currencyFormatter.format(price)}
         </span>
         <div>
-          <Button className="!border-error !text-error hover:before:!hidden active:before:!hidden text-xs ">
+          <Button
+            className="!border-error !text-error hover:before:!hidden active:before:!hidden text-xs"
+            onClick={() => removeFromWishList(id)}
+          >
             Remove
           </Button>
         </div>
       </div>
-    </article>
+    </motion.article>
   );
 };
 

@@ -2,8 +2,10 @@ import React from "react";
 import Link from "next/link";
 import styled from "styled-components";
 import { motion } from "framer-motion";
-import { BsHeart, BsEye } from "react-icons/bs";
+import { BsEye } from "react-icons/bs";
 import { currencyFormatter } from "utils";
+import Heart from "./Heart";
+import { useAppContext } from "contexts/AppContext";
 const OverLayVariants = {
   initial: {
     opacity: 0,
@@ -30,7 +32,9 @@ const ImageVariants = {
   },
 };
 
-const ProductCard = ({ name, brand, price, images, slug, collection }) => {
+const ProductCard = ({ id, name, brand, price, images, slug, collection }) => {
+  const { userInfo } = useAppContext();
+
   return (
     <article>
       <ImageContainer initial="initial" whileHover="hover">
@@ -40,13 +44,19 @@ const ProductCard = ({ name, brand, price, images, slug, collection }) => {
         />
         <motion.div variants={OverLayVariants}>
           <ButtonGroup>
-            <button>
-              <BsHeart color="#212121" />
-            </button>
+            <div>
+              <Heart
+                productId={id}
+                userId={userInfo.id}
+                name={name}
+                isHomePage
+              />
+            </div>
+
             <Link
               href={`/collections/${collection.data.attributes.slug}/${slug}`}
             >
-              <BsEye color="#212121" />
+              <BsEye color="#121212" />
             </Link>
           </ButtonGroup>
         </motion.div>
@@ -78,7 +88,7 @@ const ImageContainer = styled(motion.div)`
     justify-content: end;
     align-items: end;
     padding: 1em;
-    background-color: rgba(18, 18, 18, 0.2);
+    background-color: rgba(18, 18, 18, 0.3);
     border-radius: 4px;
   }
 `;
@@ -88,8 +98,8 @@ const ButtonGroup = styled.div`
   gap: 1em;
   align-items: center;
 
-  button,
-  a {
+  a,
+  & > div {
     width: 2rem;
     height: 2rem;
     display: flex;

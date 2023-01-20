@@ -58,13 +58,12 @@ export default withUrqlClient((_ssrExchange) => ({
   url: process.env.NEXT_PUBLIC_GRAPHQL_URL,
 }))(Collections);
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
   await client.query(GET_COLLECTIONS).toPromise();
 
   return {
     props: {
       urqlState: ssrCache.extractData(),
     },
-    revalidate: 600,
   };
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { withUrqlClient } from "next-urql";
 import { useMutation, useQuery } from "urql";
 import { client, ssrCache } from "utils/urqlClient";
@@ -16,11 +16,9 @@ import { ContainerStyled, UnderLine, Button } from "styles/global.styles";
 import ImageMagnifier from "components/ImageMagnifier";
 import { useAppContext } from "contexts/AppContext";
 import { Add_Cart, UPDATE_QTY } from "graphql/cart";
-import { parseCookies } from "nookies";
 import Heart from "components/Heart";
 const ProductDetails = () => {
-  const [onSuccess, setOnSuccess] = useState(false);
-  const { userInfo, carts, setCarts, removeFromWishList } = useAppContext();
+  const { userInfo, carts, setCarts, jwt } = useAppContext();
   const router = useRouter();
   const [result] = useQuery({
     query: GET_SINGLE_PRODUCT,
@@ -42,9 +40,8 @@ const ProductDetails = () => {
     });
   };
 
-  const handleSubmit = async (qty, product_id, user_id) => {
-    const cookies = parseCookies();
-    if (!cookies.jwt) {
+  const handleSubmit = async (qty, product_id, user_id, name) => {
+    if (!jwt) {
       toast.error("Please log in to add items into cart.");
     } else {
       const existedProduct = carts.find(
@@ -60,13 +57,13 @@ const ProductDetails = () => {
           const { data, fetching, error } = await updateQty(variables, {
             fetchOptions: {
               headers: {
-                Authorization: `Bearer ${cookies.jwt}`,
+                Authorization: `Bearer ${jwt}`,
               },
             },
           });
 
           if (!fetching && !error) {
-            setOnSuccess(true);
+            toast.success(`${name} is Added to cart.`);
 
             setCarts((prev) => {
               return prev.map((cart) =>
@@ -76,7 +73,6 @@ const ProductDetails = () => {
               );
             });
           }
-
           setDisabledBtn(false);
         } catch (e) {
           console.log(e);
@@ -89,12 +85,12 @@ const ProductDetails = () => {
           const { data, fetching, error } = await addCart(variables, {
             fetchOptions: {
               headers: {
-                Authorization: `Bearer ${cookies.jwt}`,
+                Authorization: `Bearer ${jwt}`,
               },
             },
           });
           if (!fetching && !error) {
-            setOnSuccess(true);
+            toast.success(`${name} is Added to cart.`);
 
             const newCart = {
               id: data.createCart.data.id,
@@ -103,7 +99,7 @@ const ProductDetails = () => {
               productSlug:
                 data.createCart.data.attributes.product.data.attributes.slug,
               productPrice:
-                data.createCart.data.attributes.product.data.attributes.slug,
+                data.createCart.data.attributes.product.data.attributes.price,
               userId:
                 data.createCart.data.attributes.users_permissions_user.data.id,
             };
@@ -124,16 +120,13 @@ const ProductDetails = () => {
 
   const { data, fetching, error } = result;
 
+  if (fetching) {
+    return <h1>Loading...</h1>;
+  }
+
   const id = data?.products.data[0].id;
   const product = data?.products.data[0].attributes;
   const { name, brand, description, price, images } = product;
-
-  useEffect(() => {
-    if (onSuccess) {
-      toast.success(`${name} is Added to cart.`);
-      setOnSuccess(false);
-    }
-  }, [onSuccess]);
 
   return (
     <ContainerStyled>
@@ -203,14 +196,15 @@ const ProductDetails = () => {
               <AddToCartAndWishList>
                 <Button
                   className="flex items-center justify-center gap-4 basis-1/2"
-                  onClick={() => handleSubmit(qty, id, userInfo.id)}
+                  onClick={() => handleSubmit(qty, id, userInfo.id, name)}
                   disabled={disabledBtn}
                 >
                   {disabledBtn ? <span>Adding</span> : <span>Add to Cart</span>}
                   <BsCart className="text-xl" />
                 </Button>
-
-                <Heart userId={userInfo.id} productId={id} />
+                <WishListBtn className="flex items-center justify-center w-12 bg-transparent border-2 border-transparent rounded h-13">
+                  <Heart userId={userInfo.id} productId={id} name={name} />
+                </WishListBtn>
               </AddToCartAndWishList>
             </ButtonGroup>
           </ProductInfo>
@@ -277,4 +271,8 @@ const AddToCartAndWishList = styled.div`
   width: 100%;
   display: flex;
   gap: 1em;
+`;
+
+const WishListBtn = styled.div`
+  border-color: ${(props) => props.theme.textColor};
 `;
