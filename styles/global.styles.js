@@ -23,11 +23,16 @@ export const UnderLine = styled.div`
 export const lightTheme = {
   backgroundColor: "var(--light)",
   textColor: "var(--dark-200)",
+  selectBoxBorderColor: "var(--dark-200)",
+  optionTextColor: "var(--dark-200)",
 };
 
 export const darkTheme = {
   backgroundColor: "var(--dark-200)",
   textColor: "var(--light)",
+  selectBoxBorderColor: "var(--light)",
+  selectBoxTextColor: "var(--dark-200)",
+  optionTextColor: "var(--dark-200)",
 };
 
 export const GlobalStyles = createGlobalStyle`

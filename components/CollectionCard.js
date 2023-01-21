@@ -31,7 +31,7 @@ const ImageVariants = {
 const CollectionCard = ({ name, slug, image }) => {
   return (
     <article>
-      <Link href={`/collections/${slug}`}>
+      <Link href={`/collections/${slug}?sort=createdAt:desc`}>
         <ImageContainer initial="initial" whileHover="hover">
           <motion.img
             src={image.data.attributes.formats.small.url}
