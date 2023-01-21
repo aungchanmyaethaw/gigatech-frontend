@@ -122,7 +122,9 @@ export function AppContextProvider({ children }) {
             qty: cart.attributes.QTY,
             productId: cart.attributes.product.data.id,
             productSlug: cart.attributes.product.data.attributes.slug,
+            productName: cart.attributes.product.data.attributes.name,
             productPrice: cart.attributes.product.data.attributes.price,
+            productImage: cart.attributes.product.data.attributes.images,
             userId: cart.attributes.users_permissions_user.data.id,
           };
         })

@@ -59,7 +59,7 @@ const RegisterForm = () => {
       setCookie(null, "jwt", userData.register.jwt, {
         maxAge: 30 * 24 * 60 * 60,
         path: "/",
-        sameSite: "None",
+        sameSite: "none",
       });
       localStorage.setItem(
         "user",

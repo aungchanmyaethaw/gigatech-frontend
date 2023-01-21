@@ -12,6 +12,19 @@ export const GET_CART = `query getCarts($user_id:ID){
             attributes{
               slug
               price
+              name
+              images{
+ 
+                data{
+                  id
+                  attributes{
+                    
+                    formats
+                    
+                  }
+                }
+                
+              }
             }
           }
         }
@@ -41,6 +54,19 @@ export const Add_Cart = `mutation addCart($qty:Int!,$product:ID!,$user_id:ID!){
             attributes{
               slug
               price
+              name
+              images{
+ 
+                data{
+                  id
+                  attributes{
+                    
+                    formats
+                    
+                  }
+                }
+                
+              }
             }
           }
         }

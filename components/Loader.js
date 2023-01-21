@@ -33,13 +33,7 @@ const DotTransition = {
 
 const Loader = () => {
   return (
-    <div
-      className="flex justify-center w-full py-4"
-      initial={{ opacity: 0 }}
-      whileInView={{ opacity: 1 }}
-      viewport={{ once: true }}
-      transition={{ type: "tween", duration: 0.5 }}
-    >
+    <div className="flex justify-center w-full py-4">
       <DotContainerStyled
         className="flex gap-1"
         variants={ContainerVariants}

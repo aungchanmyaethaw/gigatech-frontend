@@ -100,6 +100,10 @@ const ProductDetails = () => {
                 data.createCart.data.attributes.product.data.attributes.slug,
               productPrice:
                 data.createCart.data.attributes.product.data.attributes.price,
+              productName:
+                data.createCart.data.attributes.product.data.attributes.name,
+              productImage:
+                data.createCart.data.attributes.product.data.attributes.images,
               userId:
                 data.createCart.data.attributes.users_permissions_user.data.id,
             };

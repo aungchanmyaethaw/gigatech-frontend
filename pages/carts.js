@@ -10,9 +10,27 @@ import { BsCartXFill } from "react-icons/bs";
 import { currencyFormatter } from "utils";
 import { motion, AnimatePresence } from "framer-motion";
 import Loader from "components/Loader";
+import connectStripe from "lib/connectStripe";
 const Carts = () => {
   const { carts, fetching } = useAppContext();
   const [totalAmount, setTotalAmount] = useState(0);
+
+  const handleCheckout = async () => {
+    try {
+      const stripe = await connectStripe();
+      const res = await fetch("/api/stripe", {
+        method: "POST",
+        headers: { "Content-type": "application/json" },
+        body: JSON.stringify(carts),
+      });
+
+      const result = await res.json();
+
+      await stripe.redirectToCheckout({ sessionId: result.id });
+    } catch (e) {
+      console.log(e.message);
+    }
+  };
 
   const handleTotalAmount = () => {
     const tempTotal = carts.reduce(
@@ -49,7 +67,7 @@ const Carts = () => {
               <span className="mr-auto text-xl">
                 Total Amount : {currencyFormatter.format(totalAmount)}
               </span>
-              <Button>Checkout</Button>
+              <Button onClick={handleCheckout}>Checkout</Button>
             </motion.div>
           </AnimatePresence>
         </>
