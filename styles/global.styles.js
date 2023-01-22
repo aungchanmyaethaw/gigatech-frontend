@@ -25,6 +25,7 @@ export const lightTheme = {
   textColor: "var(--dark-200)",
   selectBoxBorderColor: "var(--dark-200)",
   optionTextColor: "var(--dark-200)",
+  backDropBackgroundColor: "rgba(253,253,253,0.3)",
 };
 
 export const darkTheme = {
@@ -33,6 +34,7 @@ export const darkTheme = {
   selectBoxBorderColor: "var(--light)",
   selectBoxTextColor: "var(--dark-200)",
   optionTextColor: "var(--dark-200)",
+  backDropBackgroundColor: "rgba(18,18,18,0.5)",
 };
 
 export const GlobalStyles = createGlobalStyle`

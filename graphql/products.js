@@ -1,6 +1,6 @@
-export const GET_PRODUCTS = `query getProducts($pagination:PaginationArg,$sort:[String],$collection:String) {
+export const GET_PRODUCTS = `query getProducts($pagination:PaginationArg,$sort:[String],$collection:String,$query:String) {
 
-  products(pagination:$pagination,sort:$sort,filters:{collection:{slug:{eq:$collection}}}){
+  products(pagination:$pagination,sort:$sort,filters:{collection:{slug:{eq:$collection}},or:[{name:{containsi:$query}},{brand:{containsi:$query}}]}){
    data{
      id
      attributes{

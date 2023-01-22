@@ -6,9 +6,11 @@ import { GlobalStyles, darkTheme, lightTheme } from "styles/global.styles";
 import Navbar from "components/Navbar";
 import Footer from "components/Footer";
 import { ThemeProvider } from "styled-components";
+import { AnimatePresence } from "framer-motion";
+import SearchBar from "./SearchBar";
 
 const Layout = ({ children }) => {
-  const { theme } = useAppContext();
+  const { theme, isSearchBarOpen } = useAppContext();
 
   return (
     <motion.main
@@ -25,6 +27,9 @@ const Layout = ({ children }) => {
       <ThemeProvider theme={theme === "light" ? lightTheme : darkTheme}>
         <GlobalStyles />
         <Navbar />
+        <AnimatePresence mode="popLayout">
+          {isSearchBarOpen && <SearchBar />}
+        </AnimatePresence>
         {children}
         <Footer />
       </ThemeProvider>

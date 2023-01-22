@@ -13,8 +13,16 @@ import styled from "styled-components";
 import { useRouter } from "next/router";
 import { useAppContext } from "contexts/AppContext";
 import { UnderLine } from "styles/global.styles";
+
 const Navbar = () => {
-  const { handleToggleTheme, theme, jwt, carts, wishlists } = useAppContext();
+  const {
+    handleToggleTheme,
+    theme,
+    jwt,
+    carts,
+    wishlists,
+    handleSearchBarOpen,
+  } = useAppContext();
 
   const router = useRouter();
 
@@ -45,7 +53,7 @@ const Navbar = () => {
 
       <div className="flex items-center gap-x-8">
         <ul className="flex gap-x-8">
-          <li>
+          <li onClick={handleSearchBarOpen}>
             <BsSearch className="text-xl xl:text-2xl " />
           </li>
           <Link href="/carts">

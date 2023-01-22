@@ -23,6 +23,7 @@ export function AppContextProvider({ children }) {
   const [userInfo, setUserInfo] = useState({ id: "", username: "", email: "" });
   const [carts, setCarts] = useState([]);
   const [wishlists, setWishlists] = useState([]);
+  const [isSearchBarOpen, setIsSearchBarOpen] = useState(false);
   const [{ data, fetching, error }, reexecuteQuery] = useQuery({
     query: GET_CART,
     variables: {
@@ -41,6 +42,17 @@ export function AppContextProvider({ children }) {
 
   const [result, removeWishList] = useMutation(DELETE_WISHLISTS);
   const [addResult, addWishlist] = useMutation(ADD_WISHLIST);
+
+  const handleSearchBarOpen = () => {
+    setIsSearchBarOpen(true);
+    document.body.style.maxHeight = "100vh";
+    document.body.style.overflowY = "hidden";
+  };
+  const handleSearchBarClose = () => {
+    setIsSearchBarOpen(false);
+    document.body.style.maxHeight = "";
+    document.body.style.overflowY = "";
+  };
 
   const removeFromWishList = async (id) => {
     try {
@@ -198,6 +210,9 @@ export function AppContextProvider({ children }) {
     wishlistFetching,
     removeFromWishList,
     addToWishList,
+    handleSearchBarOpen,
+    handleSearchBarClose,
+    isSearchBarOpen,
   };
 
   return (
