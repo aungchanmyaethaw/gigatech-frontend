@@ -104,7 +104,7 @@ const CartCard = ({ id, qty, productId, productSlug }) => {
 
   return (
     <CartCardStyled
-      className="flex flex-col items-center justify-between gap-4 p-4 rounded md:flex-row shadow bg-primary"
+      className="shadow grid  items-center grid-cols-12 p-4 rounded gap-4"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -121,31 +121,30 @@ const CartCard = ({ id, qty, productId, productSlug }) => {
           },
         }}
       />
-      <div className="flex items-center gap-4 ">
+      <div className="flex items-center justify-center  col-span-12  md:col-span-2">
         <Image
           src={images.data[0].attributes.formats.thumbnail.url}
-          width={images.data[0].attributes.formats.thumbnail.width}
-          height={images.data[0].attributes.formats.thumbnail.height}
+          width={160}
+          height={160}
           alt={name}
         />
       </div>
-
-      <Quantity className="grow flex flex-col md:flex-row">
-        <h2 className=" max-w-[30rem] line-clamp-2 basis-1/2 text-center">
+      <div className="flex md:col-span-6 col-span-12 row-span-2 items-center">
+        <h2 className=" text-center md:text-left max-w-[25rem] line-clamp-2">
           {name}
         </h2>
-        <div className="basis-1/2 w-full md:w-auto ju flex items-center ">
-          <div className="flex items-center gap-2 ml-auto">
-            <AiFillMinusCircle onClick={() => subStractQty()} />
-            <p className="text-2xl font-medium">{qty}</p>
+      </div>
 
-            <AiFillPlusCircle onClick={addQty} />
-          </div>
-          <span className="ml-auto text-xl text-primary ">
-            {currencyFormatter.format(price * qty)}
-          </span>
-        </div>
-      </Quantity>
+      <div className="flex items-center justify-center gap-2  col-span-6 md:col-span-2">
+        <AiFillMinusCircle onClick={() => subStractQty()} />
+        <p className="text-xl md:text-2xl font-medium">{qty}</p>
+
+        <AiFillPlusCircle onClick={addQty} />
+      </div>
+      <span className=" text-primary col-span-6 md:col-span-2 flex items-center justify-center text-xl md:text-2xl">
+        {currencyFormatter.format(price * qty)}
+      </span>
+      {/* <Quantity className="grow flex flex-col md:flex-row"></Quantity> */}
     </CartCardStyled>
   );
 };
@@ -154,13 +153,6 @@ export default CartCard;
 
 const CartCardStyled = styled(motion.div)`
   background-color: ${(props) => props.theme.cardBackgroundColor};
-`;
-
-const Quantity = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 1.5em;
-
   svg {
     font-size: 1.75rem;
     cursor: pointer;

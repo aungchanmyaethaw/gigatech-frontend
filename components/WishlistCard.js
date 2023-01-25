@@ -10,7 +10,10 @@ import Link from "next/link";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { motion } from "framer-motion";
+import styled from "styled-components";
+import { useRouter } from "next/router";
 const WishlistCard = ({ productSlug, collectionSlug, id }) => {
+  const router = useRouter();
   const { removeFromWishList } = useAppContext();
   const cookies = parseCookies();
   const [{ data, fetching, error }] = useQuery({
@@ -34,44 +37,55 @@ const WishlistCard = ({ productSlug, collectionSlug, id }) => {
   const { name, price, images } = data.products.data[0].attributes;
 
   return (
-    <motion.article
+    <WishlistCardStyled
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       layout
-      className="flex flex-col items-center justify-between gap-4 px-2 py-2 border rounded md:flex-row"
+      className="shadow grid  items-center grid-cols-12 p-4 rounded gap-4"
     >
-      <div className="flex items-center gap-4 grow">
-        <Link href={`/collections/${collectionSlug}/${productSlug}`}>
-          <Image
-            src={images.data[0].attributes.formats.thumbnail.url}
-            width={images.data[0].attributes.formats.thumbnail.width}
-            height={images.data[0].attributes.formats.thumbnail.height}
-            alt={name}
-          />
-        </Link>
+      <div className="flex items-center justify-center  col-span-12  md:col-span-2">
+        <Image
+          src={images.data[0].attributes.formats.thumbnail.url}
+          width={160}
+          height={160}
+          alt={name}
+          onClick={() =>
+            router.push(`/collections/${collectionSlug}/${productSlug}`)
+          }
+        />
+      </div>
+      <div className="flex md:col-span-6 col-span-12 row-span-2 items-center">
         <Link
-          className=" max-w-[30rem] line-clamp-2"
+          className="text-center md:text-left max-w-[25rem] line-clamp-2"
           href={`/collections/${collectionSlug}/${productSlug}`}
         >
           {name}
         </Link>
       </div>
-      <div className="basis-full md:basis-[40%] flex justify-center items-center">
-        <span className="text-xl text-primary md:basis-1/2">
-          {currencyFormatter.format(price)}
-        </span>
-        <div>
-          <Button
-            className="!border-error !text-error hover:before:!hidden active:before:!hidden text-xs"
-            onClick={() => removeFromWishList(id)}
-          >
-            Remove
-          </Button>
-        </div>
+
+      <span className="text-primary col-span-6 md:col-span-2 flex items-center justify-center text-xl md:text-2xl">
+        {currencyFormatter.format(price)}
+      </span>
+      <div className="flex items-center justify-center gap-2  col-span-6 md:col-span-2">
+        <Button
+          className="!border-error !text-error hover:before:!hidden active:before:!hidden text-xs !bg-transparent"
+          onClick={() => removeFromWishList(id)}
+        >
+          Remove
+        </Button>
       </div>
-    </motion.article>
+    </WishlistCardStyled>
   );
 };
 
 export default WishlistCard;
+
+const WishlistCardStyled = styled(motion.div)`
+  background-color: ${(props) => props.theme.cardBackgroundColor};
+  svg {
+    font-size: 1.75rem;
+    cursor: pointer;
+    color: ${(props) => props.theme.textColor};
+  }
+`;
