@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import styled from "styled-components";
 import { BsHeartFill, BsHeart } from "react-icons/bs";
 import { useAppContext } from "contexts/AppContext";
 import toast, { Toaster } from "react-hot-toast";

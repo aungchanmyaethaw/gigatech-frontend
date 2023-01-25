@@ -6,6 +6,7 @@ import { BsEye } from "react-icons/bs";
 import { currencyFormatter } from "utils";
 import Heart from "./Heart";
 import { useAppContext } from "contexts/AppContext";
+import { useRouter } from "next/router";
 const OverLayVariants = {
   initial: {
     opacity: 0,
@@ -33,10 +34,15 @@ const ImageVariants = {
 };
 
 const ProductCard = ({ id, name, brand, price, images, slug, collection }) => {
+  const router = useRouter();
   const { userInfo } = useAppContext();
 
   return (
-    <article>
+    <article
+      onClick={() =>
+        router.push(`/collections/${collection.data.attributes.slug}/${slug}`)
+      }
+    >
       <ImageContainer initial="initial" whileHover="hover">
         <motion.img
           src={images.data[0].attributes.formats.small.url}

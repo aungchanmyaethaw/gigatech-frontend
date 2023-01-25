@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import nookies from "nookies";
 import { withUrqlClient } from "next-urql";
 import { useAppContext } from "contexts/AppContext";
@@ -11,9 +11,9 @@ import { currencyFormatter } from "utils";
 import { motion, AnimatePresence } from "framer-motion";
 import Loader from "components/Loader";
 import connectStripe from "lib/connectStripe";
+
 const Carts = () => {
-  const { carts, fetching } = useAppContext();
-  const [totalAmount, setTotalAmount] = useState(0);
+  const { carts, fetching, totalAmount } = useAppContext();
 
   const handleCheckout = async () => {
     try {
@@ -32,18 +32,6 @@ const Carts = () => {
     }
   };
 
-  const handleTotalAmount = () => {
-    const tempTotal = carts.reduce(
-      (prev, current) => prev + current.qty * current.productPrice,
-      0
-    );
-    setTotalAmount(tempTotal);
-  };
-
-  useEffect(() => {
-    handleTotalAmount();
-  }, [carts]);
-
   let body;
 
   if (fetching) {
@@ -57,14 +45,14 @@ const Carts = () => {
               <CartCard key={cart.id} {...cart} />
             ))}
             <motion.div
-              className="flex flex-col items-center justify-center gap-8"
+              className="flex flex-col items-center justify-center gap-8 mt-4 md:mt-8"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ delay: 0.5, duration: 0.5 }}
               layout
             >
-              <span className="mr-auto text-xl">
+              <span className="ml-auto text-xl font-medium">
                 Total Amount : {currencyFormatter.format(totalAmount)}
               </span>
               <Button onClick={handleCheckout}>Checkout</Button>
@@ -84,7 +72,7 @@ const Carts = () => {
 
   return (
     <ContainerStyled>
-      <div className="flex flex-col items-center mb-20">
+      <div className="flex flex-col items-center md:mb-20 mb-10">
         <h2 className="text-3xl lg:text-[40px] text-center font-normal capitalize">
           Cart
         </h2>
@@ -125,5 +113,5 @@ export async function getServerSideProps(ctx) {
 const CartContainerStyled = styled(motion.div)`
   display: flex;
   flex-direction: column;
-  gap: 2em;
+  gap: 1.25em;
 `;

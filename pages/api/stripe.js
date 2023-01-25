@@ -1,8 +1,6 @@
 const stripe = require("stripe")(process.env.NEXT_PUBLIC_STRIPE_SECRET_KEY);
 
 export default async function stripeHandler(req, res) {
-  console.log(req.body);
-
   if (req.method === "POST") {
     try {
       const session = await stripe.checkout.sessions.create({
@@ -12,8 +10,6 @@ export default async function stripeHandler(req, res) {
           allowed_countries: ["MM", "SG", "US", "TH"],
         },
         line_items: req.body.map((item) => {
-          console.log(item.productImage);
-
           return {
             price_data: {
               currency: "usd",
@@ -26,10 +22,6 @@ export default async function stripeHandler(req, res) {
               unit_amount: item.productPrice * 100,
             },
             quantity: item.qty,
-            adjustable_quantity: {
-              enabled: true,
-              minimum: 1,
-            },
           };
         }),
         success_url: `${req.headers.origin}/success?session_id={CHECKOUT_SESSION_ID}`,

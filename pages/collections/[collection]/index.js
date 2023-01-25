@@ -26,7 +26,7 @@ const Collection = () => {
   const [collectionResult] = useQuery({
     query: GET_COLLECTIONS,
     variables: {
-      collection: router.query.collection,
+      slug: router.query.collection,
     },
   });
 

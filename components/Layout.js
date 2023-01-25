@@ -8,9 +8,9 @@ import Footer from "components/Footer";
 import { ThemeProvider } from "styled-components";
 import { AnimatePresence } from "framer-motion";
 import SearchBar from "./SearchBar";
-
+import MobileNavbar from "./MobileNavbar";
 const Layout = ({ children }) => {
-  const { theme, isSearchBarOpen } = useAppContext();
+  const { theme, isSearchBarOpen, isMobileNavbarClose } = useAppContext();
 
   return (
     <motion.main
@@ -27,6 +27,9 @@ const Layout = ({ children }) => {
       <ThemeProvider theme={theme === "light" ? lightTheme : darkTheme}>
         <GlobalStyles />
         <Navbar />
+        <AnimatePresence mode="popLayout">
+          {isMobileNavbarClose && <MobileNavbar />}
+        </AnimatePresence>
         <AnimatePresence mode="popLayout">
           {isSearchBarOpen && <SearchBar />}
         </AnimatePresence>

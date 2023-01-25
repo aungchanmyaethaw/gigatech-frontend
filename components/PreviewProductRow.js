@@ -67,7 +67,7 @@ const PreviewProductRow = ({ variables, heading }) => {
         </div>
       ) : (
         <motion.div
-          className="grid grid-cols-1 gap-6 md:gap-8 lg:gap-10 md:grid-cols-2 lg:grid-cols-4"
+          className="grid grid-cols-1 gap-8 md:gap-10  md:grid-cols-2 lg:grid-cols-4"
           initial={{ y: 40, opacity: 0 }}
           whileInView={{ y: 0, opacity: 1 }}
           viewport={{ once: true }}

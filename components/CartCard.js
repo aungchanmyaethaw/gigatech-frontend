@@ -91,7 +91,7 @@ const CartCard = ({ id, qty, productId, productSlug }) => {
 
   if (fetching) {
     return (
-      <article className="flex flex-col items-center gap-20 px-2 py-2 border rounded md:flex-row">
+      <article className="flex flex-col items-center gap-20 px-2 py-2 border rounded md:flex-row ">
         <SkeletonTheme baseColor="#ddd" highlightColor="#fff">
           <Skeleton height={156} width={156} />
           <Skeleton width={240} count="2" />
@@ -103,8 +103,8 @@ const CartCard = ({ id, qty, productId, productSlug }) => {
   const { name, price, images } = data.products.data[0].attributes;
 
   return (
-    <motion.article
-      className="flex flex-col items-center justify-between gap-4 px-2 py-2 border rounded md:flex-row"
+    <CartCardStyled
+      className="flex flex-col items-center justify-between gap-4 p-4 rounded md:flex-row shadow bg-primary"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -121,32 +121,40 @@ const CartCard = ({ id, qty, productId, productSlug }) => {
           },
         }}
       />
-      <div className="flex items-center gap-4 grow">
+      <div className="flex items-center gap-4 ">
         <Image
           src={images.data[0].attributes.formats.thumbnail.url}
           width={images.data[0].attributes.formats.thumbnail.width}
           height={images.data[0].attributes.formats.thumbnail.height}
           alt={name}
         />
-        <h2 className=" max-w-[30rem] line-clamp-2">{name}</h2>
       </div>
 
-      <Quantity className="basis-full md:basis-[40%]">
-        <div className="flex items-center gap-3 basis-1/2">
-          <AiFillMinusCircle onClick={() => subStractQty()} />
-          <p className="text-2xl font-medium">{qty}</p>
+      <Quantity className="grow flex flex-col md:flex-row">
+        <h2 className=" max-w-[30rem] line-clamp-2 basis-1/2 text-center">
+          {name}
+        </h2>
+        <div className="basis-1/2 w-full md:w-auto ju flex items-center ">
+          <div className="flex items-center gap-2 ml-auto">
+            <AiFillMinusCircle onClick={() => subStractQty()} />
+            <p className="text-2xl font-medium">{qty}</p>
 
-          <AiFillPlusCircle onClick={addQty} />
+            <AiFillPlusCircle onClick={addQty} />
+          </div>
+          <span className="ml-auto text-xl text-primary ">
+            {currencyFormatter.format(price * qty)}
+          </span>
         </div>
-        <span className="ml-auto text-xl text-primary basis-1/2">
-          {currencyFormatter.format(price * qty)}
-        </span>
       </Quantity>
-    </motion.article>
+    </CartCardStyled>
   );
 };
 
 export default CartCard;
+
+const CartCardStyled = styled(motion.div)`
+  background-color: ${(props) => props.theme.cardBackgroundColor};
+`;
 
 const Quantity = styled.div`
   display: flex;

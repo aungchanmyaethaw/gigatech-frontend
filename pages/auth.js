@@ -25,7 +25,7 @@ const Auth = () => {
             Login
           </h2>
 
-          {currentTab === "logIn" && <UnderLine />}
+          {currentTab === "logIn" && <UnderLine className="!w-3/4" />}
         </div>
         <div className="flex flex-col items-center">
           <h2

@@ -6,16 +6,16 @@ const Hero = () => {
   return (
     <HeroStyled>
       <motion.div
-        className="flex flex-col items-center gap-4 px-4 md:gap-8"
+        className="flex flex-col items-center gap-6 px-4 md:gap-8"
         initial={{ y: 32, opacity: 0 }}
         whileInView={{ y: 0, opacity: 1 }}
         viewport={{ once: true }}
         transition={{ delay: 0.5, type: "tween", duration: 0.5 }}
       >
-        <h1 className="text-2xl font-light text-light sm:text-3xl md:text-4xl lg:text-5xl">
+        <h1 className="text-2xl font-normal md:font-light text-light sm:text-3xl md:text-4xl lg:text-5xl">
           Giving Futures To Your Tech
         </h1>
-        <p className="text-center text-light">
+        <p className="text-center text-light text-sm md:text-base">
           GigaTech offers the world &apos;s leading brands of laptops, mobile
           phones,
           <br className="hidden lg:block" />

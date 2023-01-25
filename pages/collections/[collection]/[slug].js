@@ -5,7 +5,7 @@ import { client, ssrCache } from "utils/urqlClient";
 import { GET_SINGLE_PRODUCT } from "graphql/products";
 import { useRouter } from "next/router";
 import { AiFillPlusCircle, AiFillMinusCircle } from "react-icons/ai";
-import { BsHeart, BsCart } from "react-icons/bs";
+import { BsCart } from "react-icons/bs";
 import styled from "styled-components";
 import { motion } from "framer-motion";
 import toast, { Toaster } from "react-hot-toast";
@@ -154,7 +154,7 @@ const ProductDetails = () => {
       ) : null}
       {!fetching ? (
         <ProductDetailsRow
-          className="lg:!flex-row"
+          className="md:!flex-row"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
@@ -183,7 +183,7 @@ const ProductDetails = () => {
 
           <ProductInfo>
             <h4 className="mb-2 text-xl font-bold uppercase">{brand}</h4>
-            <h3 className="mb-4 text-3xl">{name}</h3>
+            <h3 className="mb-4 text-2xl md:text-3xl">{name}</h3>
             <UnderLine className="!w-[25%] mb-8" />
             <p className="mb-4 text-base">{description}</p>
             <ButtonGroup>
@@ -199,14 +199,14 @@ const ProductDetails = () => {
               </Quantity>
               <AddToCartAndWishList>
                 <Button
-                  className="flex items-center justify-center gap-4 basis-1/2"
+                  className="flex items-center justify-center gap-4 basis-full lg:basis-1/2 md:basis-3/4"
                   onClick={() => handleSubmit(qty, id, userInfo.id, name)}
                   disabled={disabledBtn}
                 >
                   {disabledBtn ? <span>Adding</span> : <span>Add to Cart</span>}
                   <BsCart className="text-xl" />
                 </Button>
-                <WishListBtn className="flex items-center justify-center w-12 bg-transparent border-2 border-transparent rounded h-13">
+                <WishListBtn className="flex items-center justify-center w-12 bg-transparent border-2 border-transparent rounded h-12">
                   <Heart userId={userInfo.id} productId={id} name={name} />
                 </WishListBtn>
               </AddToCartAndWishList>
@@ -274,6 +274,7 @@ const AddToCartAndWishList = styled.div`
   margin: 2em 0 0;
   width: 100%;
   display: flex;
+  align-items: center;
   gap: 1em;
 `;
 
