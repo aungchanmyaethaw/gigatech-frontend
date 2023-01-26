@@ -40,7 +40,7 @@ const WishLists = () => {
     <ContainerStyled>
       <div className="flex flex-col items-center mb-20">
         <h2 className="text-3xl lg:text-[40px] text-center font-normal capitalize">
-          Wishlists
+          Wishlist
         </h2>
         <UnderLine className="!w-[6rem]" />
       </div>

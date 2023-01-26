@@ -1,102 +1,115 @@
 import React from "react";
-import { GET_ORDER_DETAILS } from "graphql/order_details";
-import { useQuery } from "urql";
-import { useRouter } from "next/router";
-import { ContainerStyled, UnderLine } from "styles/global.styles";
 import { currencyFormatter } from "utils";
-import Image from "next/image";
-const OrderDetails = () => {
-  const router = useRouter();
-
-  const [results] = useQuery({
-    query: GET_ORDER_DETAILS,
-    variables: { order_id: router.query.order_id },
-  });
-
-  const { data, fetching, error } = results;
-
-  if (fetching) {
-    return <h1>Loading...</h1>;
+import { useAppContext } from "contexts/AppContext";
+import Link from "next/link";
+import { ContainerStyled, UnderLine } from "styles/global.styles";
+import styled from "styled-components";
+import { motion } from "framer-motion";
+import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
+import { TbTruckOff } from "react-icons/tb";
+import OrderCard from "components/OrderCard";
+const Orders = () => {
+  const { orders, orderFetching } = useAppContext();
+  let body;
+  if (orderFetching) {
+    body = (
+      <OrderContainerStyled className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4">
+        <SkeletonTheme baseColor="#ddd" highlightColor="#fff">
+          <Skeleton height={260} />
+          <Skeleton height={260} />
+          <Skeleton height={260} />
+          <Skeleton height={260} />
+        </SkeletonTheme>
+      </OrderContainerStyled>
+    );
+  } else {
+    body = orders.length ? (
+      <OrderContainerStyled
+        className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4"
+        initial={{ y: 40, opacity: 0 }}
+        whileInView={{ y: 0, opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ delay: 0.5, type: "tween", duration: 0.5 }}
+      >
+        {orders.map((order) => (
+          <OrderCard key={order.id} {...order} />
+        ))}
+      </OrderContainerStyled>
+    ) : (
+      <div className="flex flex-col items-center gap-8">
+        <TbTruckOff className="text-[6rem] text-primary" />
+        <h4 className="text-3xl font-extralight">Currently Empty...</h4>
+      </div>
+    );
   }
-
-  const allOrders = data?.orderDetails.data;
 
   return (
     <ContainerStyled>
       <div className="flex flex-col items-center mb-20">
-        <h2 className="text-3xl lg:text-[40px] text-center font-normal capitalize mb-2">
-          Order Details
+        <h2 className="text-3xl lg:text-[40px] text-center font-normal capitalize">
+          Orders
         </h2>
-        <UnderLine />
+        <UnderLine className="!w-[6rem]" />
       </div>
-      <div className="border rounded ">
-        <div className="flex justify-between p-4 border-b-2 ">
-          <h2 className="text-xl font-semibold text-center text-primary basis-1/2">
-            Name
-          </h2>
-          <h2 className="text-xl font-semibold text-center text-primary basis-1/4">
-            QTY
-          </h2>
-          <h2 className="text-xl font-semibold text-center text-primary basis-1/4">
-            Total
-          </h2>
-        </div>
-        {!fetching && !error
-          ? allOrders.map((order) => {
-              const qty = order.attributes.QTY;
-              const product = order.attributes.product;
-              const { name, price, images } = product.data.attributes;
-
-              return (
-                <div
-                  className="flex items-center justify-between p-4"
-                  key={order.id}
-                >
-                  <div className="flex items-center justify-start gap-2 text-center basis-1/2">
-                    <Image
-                      src={images.data[0].attributes.formats.thumbnail.url}
-                      width={
-                        images.data[0].attributes.formats.thumbnail.width / 2
-                      }
-                      height={
-                        images.data[0].attributes.formats.thumbnail.height / 2
-                      }
-                      alt={name}
-                    />
-                    <span className="w-3/4 text-center line-clamp-2">
-                      {name}
-                    </span>
-                  </div>
-                  <span className="text-center basis-1/4">{qty}</span>
-                  <span className="text-center basis-1/4">
-                    {currencyFormatter.format(price * qty)}
-                  </span>
-                </div>
-              );
-            })
-          : null}
-        <div>
-          <h2>Total Amount:</h2>
-        </div>
-      </div>
+      {body}
     </ContainerStyled>
   );
 };
 
-export default OrderDetails;
+export default Orders;
 
-// export default withUrqlClient((_ssrExchange) => ({
-//   url: process.env.NEXT_PUBLIC_GRAPHQL_URL,
-// }))(OrderDetails);
+const OrderContainerStyled = styled(motion.div)`
+  article {
+    background-color: ${(props) => props.theme.cardBackgroundColor};
+    display: flex;
+    flex-direction: column;
+    gap: 0.75em;
+    a {
+      margin-left: auto;
+      margin-top: 1.5em;
+      display: block;
+      padding: 0.75em 1.5em;
+      position: relative;
+      overflow: hidden;
+      color: var(--primary);
+      font-family: var(--font-heading);
+      font-weight: 600;
+      font-size: 0.875rem;
+      background-color: transparent;
+      border-radius: 4px;
+      z-index: 1;
+      transition: color 300ms ease-in;
+      border: 2px solid var(--primary);
+      &:before {
+        content: "";
+        width: 100%;
+        height: 100%;
+        display: block;
+        position: absolute;
+        inset: 0;
+        background-color: var(--primary);
+        border-radius: 0.75rem;
+        transform: scale(0);
+        transition: transform 300ms ease-in;
+        z-index: -1;
+      }
+      &:hover,
+      &:active {
+        color: var(--light);
+        &:before {
+          transform: scale(1.5);
+        }
+      }
+    }
+  }
+`;
 
-// export async function getServerSideProps(ctx) {
-//   await client
-//     .query(GET_ORDER_DETAILS, { order_id: ctx.query.order_id })
-//     .toPromise();
-
-//   return {
-//     props: {
-//       urqlState: ssrCache.extractData(),
-//     },
-//   };
-// }
+// <OrderContainerStyled className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4">
+//   <SkeletonTheme baseColor="#ddd" highlightColor="#fff">
+//     <Skeleton height={260} />
+//     <Skeleton height={260} />
+//     <Skeleton height={260} />
+//     <Skeleton height={260} />
+//   </SkeletonTheme>
+// </OrderContainerStyled>

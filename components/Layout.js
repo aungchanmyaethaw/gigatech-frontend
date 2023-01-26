@@ -9,6 +9,8 @@ import { ThemeProvider } from "styled-components";
 import { AnimatePresence } from "framer-motion";
 import SearchBar from "./SearchBar";
 import MobileNavbar from "./MobileNavbar";
+import ScrollToTop from "react-scroll-to-top";
+import { RxCaretUp } from "react-icons/rx";
 const Layout = ({ children }) => {
   const { theme, isSearchBarOpen, isMobileNavbarClose } = useAppContext();
 
@@ -34,6 +36,11 @@ const Layout = ({ children }) => {
           {isSearchBarOpen && <SearchBar />}
         </AnimatePresence>
         {children}
+        <ScrollToTop
+          smooth
+          component={<RxCaretUp />}
+          className="flex items-center justify-center !rounded text-3xl !bg-primary text-light !w-[2.5rem] !h-[2.5rem]"
+        />
         <Footer />
       </ThemeProvider>
     </motion.main>

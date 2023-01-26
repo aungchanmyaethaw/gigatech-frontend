@@ -110,6 +110,11 @@ const NavbarStyled = styled.nav`
     display: flex;
     align-items: center;
     column-gap: 8px;
+    &:hover {
+      svg {
+        fill: var(--primary);
+      }
+    }
     span {
       font-size: 0.875rem;
     }

@@ -11,8 +11,18 @@ import toast, { Toaster } from "react-hot-toast";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { motion } from "framer-motion";
-const CartCard = ({ id, qty, productId, productSlug }) => {
-  const { setCarts, jwt } = useAppContext();
+import { useRouter } from "next/router";
+import Link from "next/link";
+const CartCard = ({
+  id,
+  qty,
+  productPrice,
+  productId,
+  productSlug,
+  collectionSlug,
+}) => {
+  const router = useRouter();
+  const { setCarts, jwt, setTotalAmount } = useAppContext();
   const [{ data, fetching, error }] = useQuery({
     query: GET_SINGLE_PRODUCT,
     variables: {
@@ -40,6 +50,7 @@ const CartCard = ({ id, qty, productId, productSlug }) => {
             cart.id === id ? { ...cart, qty: qty + 1 } : cart
           );
         });
+        setTotalAmount((prev) => prev + productPrice);
       }
     } catch (e) {
       console.log(e.message);
@@ -62,6 +73,7 @@ const CartCard = ({ id, qty, productId, productSlug }) => {
           setCarts((prev) => {
             return prev.filter((cart) => cart.id !== id);
           });
+          setTotalAmount((prev) => prev - productPrice);
         }
       } catch (e) {
         console.log(e);
@@ -83,6 +95,7 @@ const CartCard = ({ id, qty, productId, productSlug }) => {
             );
           });
         }
+        setTotalAmount((prev) => prev - productPrice);
       } catch (e) {
         console.log(e.message);
       }
@@ -91,7 +104,7 @@ const CartCard = ({ id, qty, productId, productSlug }) => {
 
   if (fetching) {
     return (
-      <article className="flex flex-col items-center gap-20 px-2 py-2 border rounded md:flex-row ">
+      <article className="flex flex-col items-center gap-20 px-2 py-2 border rounded md:flex-row">
         <SkeletonTheme baseColor="#ddd" highlightColor="#fff">
           <Skeleton height={156} width={156} />
           <Skeleton width={240} count="2" />
@@ -127,15 +140,21 @@ const CartCard = ({ id, qty, productId, productSlug }) => {
           width={160}
           height={160}
           alt={name}
+          onClick={() =>
+            router.push(`/collections/${collectionSlug}/${productSlug}`)
+          }
         />
       </div>
       <div className="flex md:col-span-6 col-span-12 row-span-2 items-center">
-        <h2 className=" text-center md:text-left max-w-[25rem] line-clamp-2">
+        <Link
+          className=" text-center md:text-left max-w-[25rem] line-clamp-2 mb-4 md:mb-0"
+          href={`/collections/${collectionSlug}/${productSlug}`}
+        >
           {name}
-        </h2>
+        </Link>
       </div>
 
-      <div className="flex items-center justify-center gap-2  col-span-6 md:col-span-2">
+      <div className="flex items-center justify-center gap-2  col-span-6 md:col-span-2 ">
         <AiFillMinusCircle onClick={() => subStractQty()} />
         <p className="text-xl md:text-2xl font-medium">{qty}</p>
 
@@ -144,7 +163,6 @@ const CartCard = ({ id, qty, productId, productSlug }) => {
       <span className=" text-primary col-span-6 md:col-span-2 flex items-center justify-center text-xl md:text-2xl">
         {currencyFormatter.format(price * qty)}
       </span>
-      {/* <Quantity className="grow flex flex-col md:flex-row"></Quantity> */}
     </CartCardStyled>
   );
 };

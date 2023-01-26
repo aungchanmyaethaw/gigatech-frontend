@@ -15,7 +15,6 @@ import { useRouter } from "next/router";
 const WishlistCard = ({ productSlug, collectionSlug, id }) => {
   const router = useRouter();
   const { removeFromWishList } = useAppContext();
-  const cookies = parseCookies();
   const [{ data, fetching, error }] = useQuery({
     query: GET_SINGLE_PRODUCT,
     variables: {
@@ -34,7 +33,7 @@ const WishlistCard = ({ productSlug, collectionSlug, id }) => {
     );
   }
 
-  const { name, price, images } = data.products.data[0].attributes;
+  const { name, price, images } = data?.products.data[0].attributes;
 
   return (
     <WishlistCardStyled
@@ -44,12 +43,13 @@ const WishlistCard = ({ productSlug, collectionSlug, id }) => {
       layout
       className="shadow grid  items-center grid-cols-12 p-4 rounded gap-4"
     >
-      <div className="flex items-center justify-center  col-span-12  md:col-span-2">
+      <div className="flex items-center justify-center  col-span-12  md:col-span-2 ">
         <Image
           src={images.data[0].attributes.formats.thumbnail.url}
           width={160}
           height={160}
           alt={name}
+          className="cursor-pointer"
           onClick={() =>
             router.push(`/collections/${collectionSlug}/${productSlug}`)
           }
@@ -57,7 +57,7 @@ const WishlistCard = ({ productSlug, collectionSlug, id }) => {
       </div>
       <div className="flex md:col-span-6 col-span-12 row-span-2 items-center">
         <Link
-          className="text-center md:text-left max-w-[25rem] line-clamp-2"
+          className="text-center md:text-left max-w-[25rem] line-clamp-2 mb-4 md:mb-0"
           href={`/collections/${collectionSlug}/${productSlug}`}
         >
           {name}

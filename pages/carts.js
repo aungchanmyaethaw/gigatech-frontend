@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useState } from "react";
 import nookies from "nookies";
 import { withUrqlClient } from "next-urql";
 import { useAppContext } from "contexts/AppContext";
@@ -14,8 +14,9 @@ import connectStripe from "lib/connectStripe";
 
 const Carts = () => {
   const { carts, fetching, totalAmount } = useAppContext();
-
+  const [disabledBtn, setDisabledBtn] = useState(false);
   const handleCheckout = async () => {
+    setDisabledBtn(true);
     try {
       const stripe = await connectStripe();
       const res = await fetch("/api/stripe", {
@@ -27,7 +28,9 @@ const Carts = () => {
       const result = await res.json();
 
       await stripe.redirectToCheckout({ sessionId: result.id });
+      setDisabledBtn(false);
     } catch (e) {
+      setDisabledBtn(false);
       console.log(e.message);
     }
   };
@@ -55,7 +58,9 @@ const Carts = () => {
               <span className="ml-auto text-xl font-medium">
                 Total Amount : {currencyFormatter.format(totalAmount)}
               </span>
-              <Button onClick={handleCheckout}>Checkout</Button>
+              <Button onClick={handleCheckout} disabled={disabledBtn}>
+                {disabledBtn ? "Please Wait..." : "Checkout"}
+              </Button>
             </motion.div>
           </AnimatePresence>
         </>
@@ -72,7 +77,7 @@ const Carts = () => {
 
   return (
     <ContainerStyled>
-      <div className="flex flex-col items-center md:mb-20 mb-10">
+      <div className="flex flex-col items-center mb-10 md:mb-20">
         <h2 className="text-3xl lg:text-[40px] text-center font-normal capitalize">
           Cart
         </h2>

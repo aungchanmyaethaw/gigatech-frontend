@@ -9,10 +9,12 @@ import { ADD_ORDER_DETAILS } from "graphql/order_details";
 import { DELETE_CART } from "graphql/cart";
 import { useAppContext } from "contexts/AppContext";
 import { parseCookies } from "nookies";
-const success = () => {
+
+const stripe = require("stripe")(process.env.NEXT_PUBLIC_STRIPE_SECRET_KEY);
+const Success = ({ order }) => {
   const cookies = parseCookies();
 
-  const { totalAmount, userInfo, carts, jwt, setOrders, setCarts } =
+  const { carts, jwt, setOrders, setCarts, totalAmount, setTotalAmount } =
     useAppContext();
   const [addOrderResult, addOrder] = useMutation(ADD_ORDER);
   const [addOrderDetailResult, addOrderDetails] =
@@ -20,51 +22,51 @@ const success = () => {
   const [deleteResult, deleteCart] = useMutation(DELETE_CART);
 
   useEffect(() => {
-    if (totalAmount !== 0 && userInfo.id !== "") {
+    if (carts.length > 0) {
       handleCart();
     }
-  }, [totalAmount]);
+  }, [carts]);
 
   const handleCart = async () => {
-    const orderId = await handleAddOrder(totalAmount, userInfo.id);
-    carts.forEach(async (cart) => {
-      handleAddOrderDetails(cart, orderId);
+    const totalAmount = order.amount_total / 100;
+    const userId = JSON.parse(localStorage.getItem("user")).id;
+    handleAddOrder(totalAmount, userId).then((orderId) => {
+      carts.forEach((cart) => {
+        handleAddOrderDetails(cart, orderId);
+      });
     });
+    setCarts([]);
+    setTotalAmount(0);
   };
 
   const handleAddOrder = async (totalAmount, id) => {
     const orderVariables = { total_amount: totalAmount, user_id: id };
-
     try {
-      const {
-        data: orderData,
-        fetching,
-        error,
-      } = await addOrder(orderVariables, {
+      const { data, fetching, error } = await addOrder(orderVariables, {
         fetchOptions: {
           headers: {
-            Authorization: `Bearer ${jwt}`,
+            Authorization: `Bearer ${cookies.jwt}`,
           },
         },
       });
-
       if (!fetching && !error) {
+        console.log("reached");
         setOrders((prev) => {
           return [
             ...prev,
             {
-              id: orderData.createOrder.data.id,
-              totalAmount: orderData.createOrder.data.attributes.total_amount,
-              date: orderData.createOrder.data.attributes.createdAt,
+              id: data.createOrder.data.id,
+              totalAmount: data.createOrder.data.attributes.total_amount,
+              date: data.createOrder.data.attributes.createdAt,
+              status: data.createOrder.data.attributes.status,
             },
           ];
         });
       }
-      const orderId = await orderData.createOrder.data.id;
-
+      const orderId = await data.createOrder.data.id;
       return orderId;
     } catch (e) {
-      return e.message;
+      console.log(e);
     }
   };
 
@@ -80,7 +82,7 @@ const success = () => {
         {
           fetchOptions: {
             headers: {
-              Authorization: `Bearer ${jwt}`,
+              Authorization: `Bearer ${cookies.jwt}`,
             },
           },
         }
@@ -91,11 +93,10 @@ const success = () => {
         const { data, fetching, error } = await deleteCart(variables, {
           fetchOptions: {
             headers: {
-              Authorization: `Bearer ${jwt}`,
+              Authorization: `Bearer ${cookies.jwt}`,
             },
           },
         });
-
         if (!fetching && !error) {
           setCarts((prev) => {
             return prev.filter((prevCart) => prevCart.id !== cart.id);
@@ -121,7 +122,7 @@ const success = () => {
   );
 };
 
-export default success;
+export default Success;
 
 const ThankYouContainer = styled.div`
   padding: 2em;
@@ -163,3 +164,13 @@ const ThankYouContainer = styled.div`
     }
   }
 `;
+
+export async function getServerSideProps(ctx) {
+  const order = await stripe.checkout.sessions.retrieve(ctx.query.session_id, {
+    expand: ["line_items"],
+  });
+
+  return {
+    props: { order },
+  };
+}

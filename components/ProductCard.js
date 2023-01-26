@@ -38,11 +38,7 @@ const ProductCard = ({ id, name, brand, price, images, slug, collection }) => {
   const { userInfo } = useAppContext();
 
   return (
-    <article
-      onClick={() =>
-        router.push(`/collections/${collection.data.attributes.slug}/${slug}`)
-      }
-    >
+    <article>
       <ImageContainer initial="initial" whileHover="hover">
         <motion.img
           src={images.data[0].attributes.formats.small.url}
@@ -67,7 +63,12 @@ const ProductCard = ({ id, name, brand, price, images, slug, collection }) => {
           </ButtonGroup>
         </motion.div>
       </ImageContainer>
-      <div className="flex flex-col gap-2 mt-8">
+      <div
+        className="flex flex-col gap-2 mt-8 cursor-pointer"
+        onClick={() =>
+          router.push(`/collections/${collection.data.attributes.slug}/${slug}`)
+        }
+      >
         <h6 className="font-bold uppercase ">{brand}</h6>
         <span className="text-base  line-clamp-2 text-ellipsis`">{name}</span>
         <span className="text-base font-semibold text-primary">

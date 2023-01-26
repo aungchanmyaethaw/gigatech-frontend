@@ -18,7 +18,7 @@ import { useAppContext } from "contexts/AppContext";
 import { Add_Cart, UPDATE_QTY } from "graphql/cart";
 import Heart from "components/Heart";
 const ProductDetails = () => {
-  const { userInfo, carts, setCarts, jwt } = useAppContext();
+  const { userInfo, carts, setCarts, jwt, setTotalAmount } = useAppContext();
   const router = useRouter();
   const [result] = useQuery({
     query: GET_SINGLE_PRODUCT,
@@ -40,10 +40,11 @@ const ProductDetails = () => {
     });
   };
 
-  const handleSubmit = async (qty, product_id, user_id, name) => {
+  const handleSubmit = async (qty, product_id, user_id, name, price) => {
     if (!jwt) {
       toast.error("Please log in to add items into cart.");
     } else {
+      setTotalAmount((prev) => prev + qty * price);
       const existedProduct = carts.find(
         (cart) => cart.productId === product_id && cart.userId === user_id
       );
@@ -104,6 +105,9 @@ const ProductDetails = () => {
                 data.createCart.data.attributes.product.data.attributes.name,
               productImage:
                 data.createCart.data.attributes.product.data.attributes.images,
+              collectionSlug:
+                data.createCart.data.attributes.product.data.attributes
+                  .collection.data.attributes.slug,
               userId:
                 data.createCart.data.attributes.users_permissions_user.data.id,
             };
@@ -113,8 +117,10 @@ const ProductDetails = () => {
             });
 
             setDisabledBtn(false);
+            setQty(1);
           }
         } catch (e) {
+          setQty(1);
           setDisabledBtn(false);
           console.log(e);
         }
@@ -200,7 +206,9 @@ const ProductDetails = () => {
               <AddToCartAndWishList>
                 <Button
                   className="flex items-center justify-center gap-4 basis-full lg:basis-1/2 md:basis-3/4"
-                  onClick={() => handleSubmit(qty, id, userInfo.id, name)}
+                  onClick={() =>
+                    handleSubmit(qty, id, userInfo.id, name, price)
+                  }
                   disabled={disabledBtn}
                 >
                   {disabledBtn ? <span>Adding</span> : <span>Add to Cart</span>}

@@ -163,22 +163,14 @@ export function AppContextProvider({ children }) {
   }, []);
 
   useEffect(() => {
-    if (!jwt) {
-      return;
-    }
-
-    reexecuteQuery({ requestPolicy: "network-only" });
-    reexecuteQueryforWishList({ requestPolicy: "network-only" });
-    reexecuteQueryforOrder({ requestPolicy: "network-only" });
-  }, [jwt]);
-
-  useEffect(() => {
     if (!fetching && !error && data.carts.data.length > 0) {
       const tempCarts = data.carts.data;
       setCarts(
         tempCarts.map((cart) => {
           const { id: productId } = cart.attributes.product.data;
           const { id: userId } = cart.attributes.users_permissions_user.data;
+          const { slug: collectionSlug } =
+            cart.attributes.product.data.attributes.collection.data.attributes;
           const {
             slug: productSlug,
             name: productName,
@@ -193,16 +185,14 @@ export function AppContextProvider({ children }) {
             productName,
             productPrice,
             productImage,
+            collectionSlug,
             userId,
           };
         })
       );
+      handleTotalAmount(tempCarts);
     }
   }, [fetching]);
-
-  useEffect(() => {
-    handleTotalAmount();
-  }, [carts]);
 
   useEffect(() => {
     if (
@@ -246,15 +236,33 @@ export function AppContextProvider({ children }) {
             id: order.id,
             totalAmount: order.attributes.total_amount,
             date: order.attributes.createdAt,
+            status: order.attributes.status,
           };
         })
       );
     }
   }, [orderFetching]);
 
-  const handleTotalAmount = () => {
-    const tempTotal = carts.reduce(
-      (prev, current) => prev + current.qty * current.productPrice,
+  useEffect(() => {
+    if (!jwt) {
+      return;
+    }
+
+    reexecuteQuery({ requestPolicy: "network-only" });
+    reexecuteQueryforWishList({ requestPolicy: "network-only" });
+    reexecuteQueryforOrder({ requestPolicy: "network-only" });
+  }, [jwt]);
+
+  const handleTotalAmount = (tempCart) => {
+    const tempArr = tempCart.map((cart) => {
+      return {
+        productPrice: cart.attributes.product.data.attributes.price,
+        productQty: cart.attributes.QTY,
+      };
+    });
+
+    const tempTotal = tempArr.reduce(
+      (prev, current) => prev + current.productQty * current.productPrice,
       0
     );
     setTotalAmount(tempTotal);
@@ -290,6 +298,8 @@ export function AppContextProvider({ children }) {
     handleMobileNavbarOpen,
     handleMobileNavbarClose,
     isMobileNavbarClose,
+    setTotalAmount,
+    orderFetching,
   };
 
   return (
