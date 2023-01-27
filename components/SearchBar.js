@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { useAppContext } from "contexts/AppContext";
 import { motion } from "framer-motion";
 import { useRouter } from "next/router";
+import { BsSearch } from "react-icons/bs";
 const SearchBar = () => {
   const router = useRouter();
 
@@ -36,7 +37,7 @@ const SearchBar = () => {
         transition={{ type: "tween", duration: 0.3 }}
       >
         <form onSubmit={handleSubmit}>
-          <FieldSetStyled className="mb-16">
+          <FieldSetStyled className="mb-16 ">
             <input
               type="text"
               id="search"
@@ -46,6 +47,7 @@ const SearchBar = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
             <label htmlFor="search">What do you need...?</label>
+            <BsSearch className="text-3xl ml-2" />
           </FieldSetStyled>
         </form>
       </SearchBarContainer>

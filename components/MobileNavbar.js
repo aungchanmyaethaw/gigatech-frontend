@@ -99,7 +99,7 @@ const MobileNavbar = () => {
         </li>
         <li className="py-2">
           <Link
-            href="/carts"
+            href="/cart"
             className="flex items-center gap-6"
             onClick={handleMobileNavbarClose}
           >
@@ -109,7 +109,7 @@ const MobileNavbar = () => {
         </li>
         <li className="py-2">
           <Link
-            href="/wishlists"
+            href="/wishlist"
             className="flex items-center gap-6"
             onClick={handleMobileNavbarClose}
           >

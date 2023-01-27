@@ -1,7 +1,5 @@
 import React from "react";
-import { currencyFormatter } from "utils";
 import { useAppContext } from "contexts/AppContext";
-import Link from "next/link";
 import { ContainerStyled, UnderLine } from "styles/global.styles";
 import styled from "styled-components";
 import { motion } from "framer-motion";
@@ -104,12 +102,3 @@ const OrderContainerStyled = styled(motion.div)`
     }
   }
 `;
-
-// <OrderContainerStyled className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4">
-//   <SkeletonTheme baseColor="#ddd" highlightColor="#fff">
-//     <Skeleton height={260} />
-//     <Skeleton height={260} />
-//     <Skeleton height={260} />
-//     <Skeleton height={260} />
-//   </SkeletonTheme>
-// </OrderContainerStyled>

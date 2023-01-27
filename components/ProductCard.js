@@ -33,12 +33,22 @@ const ImageVariants = {
   },
 };
 
-const ProductCard = ({ id, name, brand, price, images, slug, collection }) => {
+const ProductCard = ({
+  id,
+  name,
+  brand,
+  price,
+  images,
+  slug,
+  collection,
+  latest,
+}) => {
   const router = useRouter();
   const { userInfo } = useAppContext();
 
   return (
-    <article>
+    <article className="relative">
+      {latest && <BadgeStyled>New</BadgeStyled>}
       <ImageContainer initial="initial" whileHover="hover">
         <motion.img
           src={images.data[0].attributes.formats.small.url}
@@ -115,4 +125,16 @@ const ButtonGroup = styled.div`
     background-color: var(--light);
     border-radius: 100%;
   }
+`;
+
+const BadgeStyled = styled.div`
+  background-color: var(--primary);
+  width: max-content;
+  padding: 0.25em 0.5em;
+  position: absolute;
+  top: 0.5em;
+  left: 0.5em;
+  color: var(--light);
+  border-radius: 4px;
+  z-index: 20;
 `;

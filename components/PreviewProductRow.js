@@ -11,7 +11,7 @@ import { UnderLine } from "styles/global.styles";
 import { GET_PRODUCTS } from "graphql/products";
 import styled from "styled-components";
 import { client, ssrCache } from "utils/urqlClient";
-const PreviewProductRow = ({ variables, heading }) => {
+const PreviewProductRow = ({ variables, heading, latest = false }) => {
   const [results] = useQuery({
     query: GET_PRODUCTS,
     variables,
@@ -78,6 +78,7 @@ const PreviewProductRow = ({ variables, heading }) => {
               {...product.attributes}
               id={product.id}
               key={product.attributes.slug}
+              latest={latest}
             />
           ))}
         </motion.div>

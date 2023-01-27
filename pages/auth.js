@@ -3,7 +3,7 @@ import { ContainerStyled } from "styles/global.styles";
 import { UnderLine } from "styles/global.styles";
 import LoginForm from "components/LoginForm";
 import RegisterForm from "components/RegisterForm";
-import { motion, AnimatePresence } from "framer-motion";
+
 const Auth = () => {
   const [currentTab, setCurrentTab] = useState("logIn");
 

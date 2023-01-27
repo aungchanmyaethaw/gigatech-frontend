@@ -75,15 +75,15 @@ const Collection = () => {
               </option>
               <option
                 className="bg-white"
-                value={"name"}
-                selected={router.query.sort === "name"}
+                value={"slug"}
+                selected={router.query.sort === "slug"}
               >
                 A-Z
               </option>
               <option
                 className="bg-white"
-                value={"name:desc"}
-                selected={router.query.sort === "name:desc"}
+                value={"slug:desc"}
+                selected={router.query.sort === "slug:desc"}
               >
                 Z-A
               </option>

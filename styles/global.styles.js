@@ -82,3 +82,41 @@ export const Button = styled.button`
     }
   }
 `;
+
+export const FieldSetStyled = styled.fieldset`
+  max-width: 40rem;
+  width: 100%;
+  position: relative;
+  input {
+    width: 100%;
+    padding: 2px 0;
+    background-color: transparent;
+    border: none;
+    border-bottom: 2px solid var(--primary);
+
+    &:not(focus),
+    &:placeholder-shown {
+      & + label {
+        font-size: 1rem;
+      }
+    }
+
+    &:focus,
+    &:not(:placeholder-shown) {
+      outline: none;
+      & + label {
+        font-size: 0.75rem;
+        top: -1.25rem;
+        color: var(--primary);
+      }
+    }
+  }
+  label {
+    position: absolute;
+    top: -4px;
+    left: 0;
+    font-weight: 600;
+    text-transform: uppercase;
+    transition: top 200ms ease-in, font-size 200ms ease-in, color 200ms ease-in;
+  }
+`;

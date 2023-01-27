@@ -11,6 +11,7 @@ export default function Home() {
       <PreviewProductRow
         variables={{ pagination: { limit: 4 }, sort: "createdAt:desc" }}
         heading="New Arrivals"
+        latest
       />
       <PreviewProductRow
         variables={{ pagination: { limit: 4 } }}

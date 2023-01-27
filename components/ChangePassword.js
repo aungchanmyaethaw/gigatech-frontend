@@ -1,89 +1,69 @@
 import React, { useState } from "react";
-import { FieldSetStyled, Button } from "styles/global.styles";
-import { useRouter } from "next/router";
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
-import { setCookie } from "nookies";
-import { useMutation } from "urql";
-import { REGISTER_USER } from "graphql/auth";
-import { useAppContext } from "contexts/AppContext";
 import { motion } from "framer-motion";
+import { FieldSetStyled, Button } from "styles/global.styles";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useForm } from "react-hook-form";
+import * as yup from "yup";
+import { useAppContext } from "contexts/AppContext";
+import { useMutation } from "urql";
+import { CHANGE_PASSWORD } from "graphql/auth";
 import { toast, Toaster } from "react-hot-toast";
+import { setCookie } from "nookies";
 const schema = yup.object().shape({
-  username: yup.string().min(4).max(20).required(),
-  email: yup.string().email().required(),
-  password: yup.string().min(8).required(),
+  currentpassword: yup.string().min(8).required(),
+  newpassword: yup.string().min(8).required(),
   confirmpassword: yup
     .string()
     .required()
-    .oneOf([yup.ref("password"), null], "password did not match!"),
+    .oneOf([yup.ref("newpassword"), null], "password did not match!"),
 });
 
-const RegisterForm = () => {
-  const router = useRouter();
-
+const ChangePassword = () => {
+  const [disabledBtn, setDisabledBtn] = useState(false);
+  const [result, updatePassword] = useMutation(CHANGE_PASSWORD);
+  const { setJwt } = useAppContext();
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm({ resolver: yupResolver(schema) });
-
-  const [result, updateUserLogIn] = useMutation(REGISTER_USER);
-  const [disbledBtn, setDisabledBtn] = useState(false);
-
-  const { setUserInfo, setJwt } = useAppContext();
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
 
   const onSubmit = async (data) => {
     try {
       setDisabledBtn(true);
       const variables = {
-        username: data.username,
-        email: data.email,
-        password: data.password,
+        current: data.currentpassword,
+        new: data.newpassword,
+        confirm: data.confirmpassword,
       };
       const {
-        data: userData,
+        data: passwordData,
         fetching,
         error,
-      } = await updateUserLogIn(variables);
+      } = await updatePassword(variables);
 
       if (error) {
         toast.error(error.message);
       }
 
       if (!fetching && !error) {
-        setUserInfo((prev) => {
-          return {
-            ...prev,
-            id: userData?.register.user.id,
-            username: userData?.register.user.username,
-            email: userData?.register.user.email,
-          };
-        });
-        setJwt(userData.register.jwt);
-        setCookie(null, "jwt", userData.register.jwt, {
+        setJwt(passwordData.changePassword.jwt);
+
+        setCookie(null, "jwt", passwordData.changePassword.jwt, {
           maxAge: 30 * 24 * 60 * 60,
           path: "/",
           sameSite: "none",
         });
-        localStorage.setItem(
-          "user",
-          JSON.stringify({
-            id: userData?.register.user.id,
-            username: userData?.register.user.username,
-            email: userData?.register.user.email,
-          })
-        );
-        toast.success("Registered successfully.");
-        router.push("/");
-      }
 
+        toast.success("Password change successfully.");
+      }
       setDisabledBtn(false);
       reset();
     } catch (e) {
-      console.log(e.message);
+      toast.error(e.message);
     }
   };
 
@@ -109,36 +89,29 @@ const RegisterForm = () => {
       />
       <FieldSetStyled className="mb-16">
         <input
-          type="text"
-          id="username"
+          type="password"
+          id="currentpassword"
           placeholder=" "
-          {...register("username")}
+          {...register("currentpassword")}
         />
-        <label htmlFor="username">Username</label>
-        {errors.username && (
+        <label htmlFor="password">current password</label>
+        {errors.currentpassword && (
           <span className="block mt-2 text-error">
-            {errors.username.message}
+            {errors.currentpassword.message}
           </span>
-        )}
-      </FieldSetStyled>
-      <FieldSetStyled className="mb-16">
-        <input type="email" id="email" placeholder=" " {...register("email")} />
-        <label htmlFor="email">E-mail</label>
-        {errors.email && (
-          <span className="block mt-2 text-error">{errors.email.message}</span>
         )}
       </FieldSetStyled>
       <FieldSetStyled className="mb-16">
         <input
           type="password"
-          id="password"
+          id="newpassword"
           placeholder=" "
-          {...register("password")}
+          {...register("newpassword")}
         />
         <label htmlFor="password">Password</label>
         {errors.password && (
           <span className="block mt-2 text-error">
-            {errors.password.message}
+            {errors.newpassword.message}
           </span>
         )}
       </FieldSetStyled>
@@ -157,9 +130,12 @@ const RegisterForm = () => {
           </span>
         )}
       </FieldSetStyled>
-      <Button type="submit">Register</Button>
+
+      <Button type="submit" disabled={disabledBtn}>
+        {disabledBtn ? "Updating" : "Update"}
+      </Button>
     </motion.form>
   );
 };
 
-export default RegisterForm;
+export default ChangePassword;

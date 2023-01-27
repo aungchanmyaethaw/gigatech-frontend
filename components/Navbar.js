@@ -58,13 +58,13 @@ const Navbar = () => {
           <li onClick={handleSearchBarOpen}>
             <BsSearch className="text-xl xl:text-2xl " />
           </li>
-          <Link href="/carts">
+          <Link href="/cart">
             <li>
               <BsCart className="text-xl xl:text-2xl " />
               <span>{carts.length || 0} </span>
             </li>
           </Link>
-          <Link href="/wishlists">
+          <Link href="/wishlist">
             <li>
               <BsHeart className="text-xl xl:text-2xl " />
               <span className="">{wishlists.length || 0}</span>
@@ -84,7 +84,7 @@ const Navbar = () => {
         </ToggleBtn>
       </div>
       <HiOutlineBars3BottomRight
-        className="text-3xl cursor-pointer  block md:hidden"
+        className="block text-3xl cursor-pointer md:hidden"
         onClick={handleMobileNavbarOpen}
       />
     </NavbarStyled>

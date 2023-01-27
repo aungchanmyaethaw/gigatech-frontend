@@ -21,7 +21,13 @@ export function AppContextProvider({ children }) {
 
   const [theme, setTheme] = useState("");
   const [jwt, setJwt] = useState("");
-  const [userInfo, setUserInfo] = useState({ id: "", username: "", email: "" });
+  const [userInfo, setUserInfo] = useState({
+    id: "",
+    username: "",
+    email: "",
+    address: "",
+    phoneNumber: "",
+  });
   const [carts, setCarts] = useState([]);
   const [wishlists, setWishlists] = useState([]);
   const [orders, setOrders] = useState([]);
@@ -273,6 +279,8 @@ export function AppContextProvider({ children }) {
     setTheme((prev) => (prev == "light" ? "dark" : "light"));
     localStorage.setItem("theme", newTheme);
   };
+
+  console.log(jwt);
 
   const contextValue = {
     theme,
