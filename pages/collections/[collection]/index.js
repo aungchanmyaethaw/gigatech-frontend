@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { motion } from "framer-motion";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import { ContainerStyled } from "styles/global.styles";
+import { ContainerStyled, Button } from "styles/global.styles";
 import { GET_PRODUCTS } from "graphql/products";
 import { withUrqlClient } from "next-urql";
 import { useQuery } from "urql";
@@ -21,6 +21,10 @@ const Collection = () => {
     variables: {
       collection: router.query.collection,
       sort: router.query.sort,
+      pagination: {
+        start: parseInt(router.query.start),
+        limit: 4,
+      },
     },
   });
   const [collectionResult] = useQuery({
@@ -38,9 +42,23 @@ const Collection = () => {
   } = collectionResult;
 
   const handleSorting = (sortingValue) => {
-    router.push(`/collections/${router.query.collection}?sort=${sortingValue}`);
+    router.push(
+      `/collections/${
+        router.query.collection
+      }?sort=${sortingValue}&start=${parseInt(router.query.start)}`
+    );
     reFetchProducts({ requestPolicy: "network-only" });
   };
+
+  const handlePagination = (start) => {
+    router.push(
+      `/collections/${router.query.collection}?sort=${router.query.sort}&start=${start}`
+    );
+    reFetchProducts({ requestPolicy: "network-only" });
+  };
+
+  const products = data?.products.data;
+  const pagination = data?.products.meta.pagination;
 
   return (
     <ContainerStyled>
@@ -155,7 +173,7 @@ const Collection = () => {
                 viewport={{ once: true }}
                 transition={{ delay: 0.5, type: "tween", duration: 0.5 }}
               >
-                {data.products.data.map((product) => (
+                {products.map((product) => (
                   <ProductCard
                     id={product.id}
                     {...product.attributes}
@@ -167,6 +185,30 @@ const Collection = () => {
           )}
         </div>
       </div>
+      <motion.div
+        className="mt-20 flex justify-center items-center gap-4"
+        disabled={parseInt(router.query.start) >= 8}
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ type: "tween", duration: 0.7 }}
+      >
+        <Button
+          className={`text-xs disabled:cursor-not-allowed disabled:opacity-50`}
+          onClick={() => handlePagination(parseInt(router.query.start) - 4)}
+          disabled={parseInt(router.query.start) === 0}
+        >
+          Prev
+        </Button>
+        <span className="text-xl">{pagination.page}</span>
+        <Button
+          className={`text-xs disabled:cursor-not-allowed disabled:opacity-50`}
+          onClick={() => handlePagination(parseInt(router.query.start) + 4)}
+          disabled={pagination.page === pagination.pageCount}
+        >
+          Next
+        </Button>
+      </motion.div>
     </ContainerStyled>
   );
 };
@@ -180,6 +222,10 @@ export async function getServerSideProps(ctx) {
     .query(GET_PRODUCTS, {
       collection: ctx.query.collection,
       sort: ctx.query.sort,
+      pagination: {
+        start: parseInt(ctx.query.start),
+        limit: 4,
+      },
     })
     .toPromise();
   await client

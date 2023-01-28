@@ -30,12 +30,68 @@ export const GET_PRODUCTS = `query getProducts($pagination:PaginationArg,$sort:[
          
        }
      }
+     
    }
+    meta{
+      pagination{
+        page
+        total
+        pageSize
+        pageCount
+      }
+    }
  }
       
      }
 
      `;
+
+export const GET_TRENDING_PRODUCT = `query getProducts($pagination:PaginationArg,$trending:Boolean!) {
+
+  products(pagination:$pagination,filters:{trending:{eq:$trending}}){
+   data{
+     id
+     attributes{
+       name
+       brand
+       description
+       price
+       slug
+       collection{
+        data{
+          attributes{
+            slug
+            name
+          }
+        }
+      }
+       images{
+ 
+         data{
+           id
+           attributes{
+             
+             formats
+             
+           }
+         }
+         
+       }
+     }
+     
+   }
+    meta{
+      pagination{
+        page
+        pageSize
+        pageCount
+        total
+      }
+    }
+ }
+      
+     }   
+`;
 
 export const GET_SINGLE_PRODUCT = `query getProducts($slug:String!) {
 

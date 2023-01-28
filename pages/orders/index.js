@@ -7,6 +7,8 @@ import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { TbTruckOff } from "react-icons/tb";
 import OrderCard from "components/OrderCard";
+import nookies from "nookies";
+import { withUrqlClient } from "next-urql";
 const Orders = () => {
   const { orders, orderFetching } = useAppContext();
   let body;
@@ -55,7 +57,25 @@ const Orders = () => {
   );
 };
 
-export default Orders;
+export default withUrqlClient((_ssrExchange) => ({
+  url: process.env.NEXT_PUBLIC_GRAPHQL_URL,
+}))(Orders);
+
+export async function getServerSideProps(ctx) {
+  const cookies = nookies.get(ctx);
+  if (!cookies.jwt) {
+    return {
+      redirect: {
+        destination: "/auth",
+        permanment: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
+}
 
 const OrderContainerStyled = styled(motion.div)`
   article {

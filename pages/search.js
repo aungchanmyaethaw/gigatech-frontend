@@ -8,6 +8,8 @@ import { useQuery } from "urql";
 import { motion } from "framer-motion";
 import ProductCard from "components/ProductCard";
 import { TbSearchOff } from "react-icons/tb";
+import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 const Search = () => {
   const { query } = useRouter();
 

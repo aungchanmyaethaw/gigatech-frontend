@@ -280,8 +280,6 @@ export function AppContextProvider({ children }) {
     localStorage.setItem("theme", newTheme);
   };
 
-  console.log(jwt);
-
   const contextValue = {
     theme,
     handleToggleTheme,
