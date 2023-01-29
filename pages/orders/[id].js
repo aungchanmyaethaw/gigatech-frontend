@@ -7,6 +7,8 @@ import { currencyFormatter } from "utils";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import Image from "next/image";
+import styled from "styled-components";
+import { motion } from "framer-motion";
 const OrderDetails = () => {
   const router = useRouter();
 
@@ -25,6 +27,14 @@ const OrderDetails = () => {
 
   const allOrders = data?.orderDetails.data;
 
+  const totalAmount = allOrders?.reduce((prev, current) => {
+    const qty = current.attributes.QTY;
+    const product = current.attributes.product;
+    const { price } = product.data.attributes;
+
+    return qty * price + prev;
+  }, 0);
+
   return (
     <ContainerStyled>
       <div className="flex flex-col items-center mb-20">
@@ -33,18 +43,13 @@ const OrderDetails = () => {
         </h2>
         <UnderLine />
       </div>
-      <div className="border rounded ">
-        <div className="flex justify-between p-4 border-b-2 ">
-          <h2 className="text-xl font-semibold text-center text-primary basis-1/2">
-            Name
-          </h2>
-          <h2 className="text-xl font-semibold text-center text-primary basis-1/4">
-            QTY
-          </h2>
-          <h2 className="text-xl font-semibold text-center text-primary basis-1/4">
-            Total
-          </h2>
-        </div>
+      <motion.div
+        className="flex flex-col gap-5"
+        initial={{ y: 40, opacity: 0 }}
+        whileInView={{ y: 0, opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ delay: 0.5, type: "tween", duration: 0.5 }}
+      >
         {!fetching ? (
           allOrders.map((order) => {
             const qty = order.attributes.QTY;
@@ -52,64 +57,78 @@ const OrderDetails = () => {
             const { name, price, images } = product.data.attributes;
 
             return (
-              <div
-                className="flex items-center justify-between p-4"
-                key={order.id}
+              <OrderCardStyled
+                className="grid items-center grid-cols-12 gap-4 p-4 rounded shadow"
+                key={name}
               >
-                <div className="flex items-center justify-start gap-2 text-center basis-1/2">
+                <div className="flex items-center justify-center col-span-12 md:col-span-2">
                   <Image
                     src={images.data[0].attributes.formats.thumbnail.url}
-                    width={
-                      images.data[0].attributes.formats.thumbnail.width / 2
-                    }
-                    height={
-                      images.data[0].attributes.formats.thumbnail.height / 2
-                    }
+                    width={160}
+                    height={160}
                     alt={name}
                   />
-                  <span className="w-3/4 text-center line-clamp-2">{name}</span>
                 </div>
-                <span className="text-center basis-1/4">{qty}</span>
-                <span className="text-center basis-1/4">
+                <div className="flex items-center col-span-12 row-span-2 md:col-span-6">
+                  <h2 className=" text-center md:text-left max-w-[30rem] line-clamp-2 mb-4 md:mb-0">
+                    {name}
+                  </h2>
+                </div>
+
+                <span className="col-span-6 text-xl text-center md:col-span-2 md:text-left">
+                  {qty}
+                </span>
+                <span className="flex items-center justify-center col-span-6 text-xl text-primary md:col-span-2 md:text-2xl">
                   {currencyFormatter.format(price * qty)}
                 </span>
-              </div>
+              </OrderCardStyled>
             );
           })
         ) : (
-          <div className="flex items-center justify-between p-4">
+          <div className="flex flex-col gap-5">
             <SkeletonTheme baseColor="#ddd" highlightColor="#fff">
-              <Skeleton height={80} width={80} />
-              <Skeleton width={240} count="2" />
-              <Skeleton height={80} width={32} />
-              <Skeleton height={80} width={160} />
+              <OrderCardStyled className="grid items-center grid-cols-12 gap-4 p-4 rounded shadow">
+                <div className="flex justify-center col-span-12 md:col-span-2">
+                  <Skeleton width={160} height={160} />
+                </div>
+                <div className="flex justify-center col-span-12 md:col-span-6">
+                  <Skeleton width={320} count={2} />
+                </div>
+                <div className="flex justify-center col-span-6 md:col-span-2">
+                  <Skeleton width={80} />
+                </div>
+                <div className="flex justify-center col-span-6 md:col-span-2">
+                  <Skeleton width={80} />
+                </div>
+              </OrderCardStyled>
+              <OrderCardStyled className="grid items-center grid-cols-12 gap-4 p-4 rounded shadow">
+                <div className="flex justify-center col-span-12 md:col-span-2">
+                  <Skeleton width={160} height={160} />
+                </div>
+                <div className="flex justify-center col-span-12 md:col-span-6">
+                  <Skeleton width={320} count={2} />
+                </div>
+                <div className="flex justify-center col-span-6 md:col-span-2">
+                  <Skeleton width={80} />
+                </div>
+                <div className="flex justify-center col-span-6 md:col-span-2">
+                  <Skeleton width={80} />
+                </div>
+              </OrderCardStyled>
             </SkeletonTheme>
           </div>
         )}
-        <div>
-          <h2>Total Amount:</h2>
-        </div>
-      </div>
+
+        <span className="ml-auto text-xl font-medium">
+          Total Amount : {currencyFormatter.format(totalAmount || 0)}
+        </span>
+      </motion.div>
     </ContainerStyled>
   );
 };
 
 export default OrderDetails;
-// export default withUrqlClient((_ssrExchange) => ({
-//   url: process.env.NEXT_PUBLIC_GRAPHQL_URL,
-// }))(OrderDetails);
 
-// export async function getServerSideProps(ctx) {
-//   console.log(ctx);
-//   await client
-//     .query(GET_ORDER_DETAILS, {
-//       order_id: ctx.query.id,
-//     })
-//     .toPromise();
-
-//   return {
-//     props: {
-//       urqlState: ssrCache.extractData(),
-//     },
-//   };
-// }
+const OrderCardStyled = styled.article`
+  background-color: ${(props) => props.theme.cardBackgroundColor};
+`;

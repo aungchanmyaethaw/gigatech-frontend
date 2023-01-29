@@ -25,7 +25,7 @@ export const ADD_ORDER_DETAILS = `mutation addOrderDetails($order_id:ID!,$produc
     }
     `;
 
-export const GET_ORDER_DETAILS = `query getOrderDetails($order_id:ID!){
+export const GET_ORDER_DETAILS = `query getOrderDetails($order_id:ID){
   
   orderDetails(filters:{order:{id:{eq:$order_id}}}){
     
