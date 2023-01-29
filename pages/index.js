@@ -5,17 +5,31 @@ import { ssrCache, client } from "utils/urqlClient";
 import { withUrqlClient } from "next-urql";
 import { GET_PRODUCTS, GET_TRENDING_PRODUCT } from "graphql/products";
 import { useQuery } from "urql";
+import TopSellingsProductRow from "components/TopSellingsProductRow";
+
 function Home() {
   const [{ data, fetching, error }] = useQuery({
     query: GET_PRODUCTS,
     variables: { pagination: { limit: 4 }, sort: "createdAt:desc" },
   });
 
-  const [{ data: trendingData, fetching: trendingFetching, error: trending }] =
-    useQuery({
-      query: GET_TRENDING_PRODUCT,
-      variables: { pagination: { limit: 4 }, trending: true },
-    });
+  const [
+    { data: trendingData, fetching: trendingFetching, error: trendingError },
+  ] = useQuery({
+    query: GET_TRENDING_PRODUCT,
+    variables: { pagination: { limit: 4 }, trending: true },
+  });
+
+  const [
+    {
+      data: topSellingsData,
+      fetching: topSellingsFetching,
+      error: topSellingsError,
+    },
+  ] = useQuery({
+    query: GET_PRODUCTS,
+    variables: { pagination: { limit: 100 } },
+  });
 
   return (
     <>
@@ -32,7 +46,7 @@ function Home() {
         <PreviewSkeleton heading="New Arrivals" />
       )}
 
-      {trendingData ? (
+      {!trendingFetching ? (
         <PreviewProductRow
           products={trendingData.products.data}
           heading="Trending"
@@ -41,7 +55,9 @@ function Home() {
       ) : (
         <PreviewSkeleton heading="Trending" />
       )}
-      {/* <PreviewProductRow heading="Top Sellings" link={"/"} />  */}
+      {!topSellingsFetching ? (
+        <TopSellingsProductRow products={topSellingsData.products.data} />
+      ) : null}
     </>
   );
 }
@@ -57,6 +73,8 @@ export async function getServerSideProps() {
   await client
     .query(GET_TRENDING_PRODUCT, { pagination: { limit: 4 }, trending: true })
     .toPromise();
+  await client.query(GET_PRODUCTS, { pagination: { limit: 100 } }).toPromise();
+
   return {
     props: {
       urqlState: ssrCache.extractData(),

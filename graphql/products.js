@@ -17,6 +17,13 @@ export const GET_PRODUCTS = `query getProducts($pagination:PaginationArg,$sort:[
           }
         }
       }
+      order_details{
+        data{
+          attributes{
+            QTY
+          }
+        }
+      }
        images{
  
          data{
@@ -65,6 +72,13 @@ export const GET_TRENDING_PRODUCT = `query getProducts($pagination:PaginationArg
           }
         }
       }
+      order_details{
+        data{
+          attributes{
+            QTY
+          }
+        }
+      }
        images{
  
          data{
@@ -92,6 +106,54 @@ export const GET_TRENDING_PRODUCT = `query getProducts($pagination:PaginationArg
       
      }   
 `;
+
+export const GET_TOP_SELLINGS_PRODUCTS = `query getProducts($pagination:PaginationArg) {
+
+  products(pagination:$pagination){
+   data{
+     id
+     attributes{
+       name
+       brand
+       description
+       price
+       slug
+       collection{
+        data{
+          attributes{
+            slug
+            name
+          }
+        }
+      }
+      
+       images{
+ 
+         data{
+           id
+           attributes{
+             
+             formats
+             
+           }
+         }
+         
+       }
+     }
+     
+   }
+    meta{
+      pagination{
+        page
+        total
+        pageSize
+        pageCount
+      }
+    }
+ }
+      
+     }
+      `;
 
 export const GET_SINGLE_PRODUCT = `query getProducts($slug:String!) {
 

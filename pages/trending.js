@@ -57,8 +57,7 @@ const Trending = () => {
         ))}
       </motion.div>
       <motion.div
-        className="mt-20 flex justify-center items-center gap-4"
-        disabled={parseInt(router.query.start) >= 8}
+        className="flex items-center justify-center gap-4 mt-20"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}

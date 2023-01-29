@@ -48,7 +48,10 @@ const Navbar = () => {
           </Link>
           <UnderLine className="!w-1/2" />
         </div>
-        <Link href="/collections" className="hidden font-medium md:block">
+        <Link
+          href="/collections"
+          className="hidden font-medium md:block hover:text-primary"
+        >
           Collections
         </Link>
       </div>

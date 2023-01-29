@@ -25,9 +25,8 @@ export function AppContextProvider({ children }) {
     id: "",
     username: "",
     email: "",
-    address: "",
-    phoneNumber: "",
   });
+
   const [carts, setCarts] = useState([]);
   const [wishlists, setWishlists] = useState([]);
   const [orders, setOrders] = useState([]);
