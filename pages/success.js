@@ -14,8 +14,7 @@ const stripe = require("stripe")(process.env.NEXT_PUBLIC_STRIPE_SECRET_KEY);
 const Success = ({ order }) => {
   const cookies = parseCookies();
 
-  const { carts, jwt, setOrders, setCarts, totalAmount, setTotalAmount } =
-    useAppContext();
+  const { carts, setOrders, setCarts, setTotalAmount } = useAppContext();
   const [addOrderResult, addOrder] = useMutation(ADD_ORDER);
   const [addOrderDetailResult, addOrderDetails] =
     useMutation(ADD_ORDER_DETAILS);

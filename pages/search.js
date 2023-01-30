@@ -22,7 +22,9 @@ const Search = () => {
     <ContainerStyled>
       <div className="flex items-center gap-4 mb-20 text-2xl">
         <h2>Results for</h2>
-        <span className="font-bold text-primary">"{query.searchterm}"</span>
+        <span className="font-bold text-primary">
+          {'"' + query.searchterm + '"'}
+        </span>
       </div>
       {fetching ? (
         <div className="grid grid-cols-1 gap-6 md:gap-8 lg:gap-10 md:grid-cols-2 lg:grid-cols-4">
