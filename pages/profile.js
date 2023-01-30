@@ -40,6 +40,10 @@ const Profile = () => {
       >
         <ProfileContainerStyled>
           <div className="flex items-center min-h-[18rem] gap-20 ">
+            <div className="flex flex-col items-center gap-2 mb-10 text-xl">
+              <h2 className="text-2xl font-semibold">{userInfo.username}</h2>
+              <span>{userInfo.email}</span>
+            </div>
             <div className="flex flex-col items-center justify-center gap-4">
               <Link
                 href="/orders"
@@ -65,10 +69,6 @@ const Profile = () => {
               >
                 Account Details
               </Link>
-            </div>
-            <div className="flex flex-col items-center gap-2 mb-10 text-xl">
-              <h2 className="text-2xl font-semibold">{userInfo.username}</h2>
-              <span>{userInfo.email}</span>
             </div>
           </div>
 

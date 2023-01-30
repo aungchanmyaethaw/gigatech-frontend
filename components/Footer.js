@@ -95,19 +95,19 @@ const Footer = () => {
                 Collections
               </Link>
               <Link
-                href="/"
+                href="/newarrivals?sort=createdAt:desc&start=0"
                 className="text-sm text-light w-max hover:text-primary "
               >
                 New Arrivals
               </Link>
               <Link
-                href="/"
+                href="/trending?start=0"
                 className="text-sm text-light w-max hover:text-primary "
               >
                 Trending
               </Link>
               <Link
-                href="/"
+                href="/topsellings"
                 className="text-sm text-light w-max hover:text-primary "
               >
                 Top Sellings

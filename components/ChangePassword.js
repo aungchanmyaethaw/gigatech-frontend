@@ -108,7 +108,7 @@ const ChangePassword = () => {
           placeholder=" "
           {...register("newpassword")}
         />
-        <label htmlFor="password">Password</label>
+        <label htmlFor="password">new password</label>
         {errors.password && (
           <span className="block mt-2 text-error">
             {errors.newpassword.message}
