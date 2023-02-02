@@ -75,48 +75,25 @@ const Collection = () => {
             <select
               className="w-[8rem] p-2  text-dark-200 rounded font-body "
               id="sorting"
+              defaultValue={router.query.sort}
               onChange={(e) => handleSorting(e.target.value)}
             >
-              <option
-                className="bg-white"
-                value={"createdAt:desc"}
-                selected={router.query.sort === "createdAt:desc"}
-              >
+              <option className="bg-white" value={"createdAt:desc"}>
                 Date:New-Old
               </option>
-              <option
-                className="bg-white"
-                value={"createdAt"}
-                selected={router.query.sort === "createdAt"}
-              >
+              <option className="bg-white" value={"createdAt"}>
                 Date:Old-New
               </option>
-              <option
-                className="bg-white"
-                value={"slug"}
-                selected={router.query.sort === "slug"}
-              >
+              <option className="bg-white" value={"slug"}>
                 A-Z
               </option>
-              <option
-                className="bg-white"
-                value={"slug:desc"}
-                selected={router.query.sort === "slug:desc"}
-              >
+              <option className="bg-white" value={"slug:desc"}>
                 Z-A
               </option>
-              <option
-                className="bg-white"
-                value={"price:desc"}
-                selected={router.query.sort === "price:desc"}
-              >
+              <option className="bg-white" value={"price:desc"}>
                 Price:High-Low
               </option>
-              <option
-                className="bg-white"
-                value={"price"}
-                selected={router.query.sort === "price"}
-              >
+              <option className="bg-white" value={"price"}>
                 Price:Low-High
               </option>
             </select>
@@ -186,7 +163,7 @@ const Collection = () => {
         </div>
       </div>
       <motion.div
-        className="mt-20 flex justify-center items-center gap-4"
+        className="flex items-center justify-center gap-4 mt-20"
         disabled={parseInt(router.query.start) >= 8}
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
